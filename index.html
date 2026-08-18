@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Digital Competency Exam System</title>
+    <title>Digital Competency System</title>
     <!-- Tailwind CSS & Chart.js & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -24,7 +24,7 @@
         <div class="max-w-7xl mx-auto px-4 py-2.5 flex justify-between items-center gap-2">
             <div class="flex items-center space-x-2 min-w-0">
                 <i class="fa-solid fa-laptop-code text-xl text-yellow-300 shrink-0"></i>
-                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency By : Dr.pkkp 18/08/2026</span>
+                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency By : Dr.pkkp</span>
             </div>
             <div id="userInfo" class="hidden flex items-center space-x-2 shrink-0">
                 <span id="userDisplayName" class="text-[11px] sm:text-xs bg-indigo-800 px-2.5 py-1 rounded-full border border-indigo-500 max-w-[150px] sm:max-w-none truncate"></span>
@@ -303,13 +303,12 @@
         let chartInstance = null;
         let allAdminLogs = [];
 
-        // ตัวแปร Anti-Cheating
         let violationCount = 0;
         const MAX_VIOLATIONS = 3;
         let isExamActive = false;
 
         async function handleLogin(e) {
-            e.preventDefault();
+            if (e && e.preventDefault) e.preventDefault();
             const u = document.getElementById('usernameInput').value.trim();
             const p = document.getElementById('passwordInput').value.trim();
             const btn = document.getElementById('loginBtn');
