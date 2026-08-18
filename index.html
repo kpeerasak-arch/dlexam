@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Competency Testing System</title>
+    <!-- Tailwind CSS & Chart.js -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+
+    <!-- Header Navigation -->
+    <nav class="bg-indigo-700 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <i class="fa-solid fa-laptop-code text-2xl text-yellow-300"></i>
+                <span class="font-bold text-xl tracking-wide">Digital Competency Exam</span>
+            </div>
+            <div id="userInfo" class="hidden flex items-center space-x-4">
+                <span id="userDisplayName" class="text-sm bg-indigo-800 px-3 py-1 rounded-full border border-indigo-500"></span>
+                <button onclick="logout()" class="text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg transition">
+                    <i class="fa-solid fa-sign-out-alt mr-1"></i> ออกจากระบบ
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Container -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+        
+        <!-- View 1: Login Form -->
+        <section id="loginView" class="max-w-md mx-auto my-12 bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
+            <div class="text-center mb-6">
+                <h2 class="text-2xl font-bold text-indigo-900">เข้าสู่ระบบทดสอบ</h2>
+                <p class="text-slate-500 text-sm mt-1">ประเมินสมรรถนะดิจิทัลตามกรอบมาตรฐาน</p>
+            </div>
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Username / รหัสนักศึกษา</label>
+                    <input type="text" id="usernameInput" required class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 mb-1">Password</label>
+                    <input type="password" id="passwordInput" required class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition">
+                    เข้าสู่ระบบ
+                </button>
+            </form>
+        </section>
+
+        <!-- View 2: Dashboard & Test Launcher -->
+        <section id="dashboardView" class="hidden space-y-6">
+            <!-- Welcome Banner & Start Exam -->
+            <div class="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <h1 class="text-2xl font-bold">ยินดีต้อนรับสู่ระบบประเมินสมรรถนะดิจิทัล</h1>
+                    <p class="text-indigo-100 mt-1 text-sm">การทดสอบ 100 ข้อ (Computing Fundamentals, Key Applications, Living Online)</p>
+                </div>
+                <button onclick="startExam()" class="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold px-6 py-3 rounded-xl shadow-md transition transform hover:scale-105">
+                    <i class="fa-solid fa-play mr-2"></i> เริ่มทำข้อสอบ (100 ข้อ)
+                </button>
+            </div>
+
+            <!-- Analytics Dashboard -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Trend & Prediction Card -->
+                <div class="bg-white p-5 rounded-2xl shadow border border-slate-100">
+                    <h3 class="font-bold text-slate-700 mb-2"><i class="fa-solid fa-chart-line text-indigo-600 mr-2"></i>แนวโน้มผลการสอบ</h3>
+                    <div class="text-3xl font-extrabold text-indigo-600 mt-2" id="passPrediction">--</div>
+                    <p class="text-xs text-slate-500 mt-1" id="predictionDetails">คำนวณจากสถิติการสอบที่ผ่านมา</p>
+                </div>
+
+                <!-- Competency Breakdown Radar/Bar Chart -->
+                <div class="bg-white p-5 rounded-2xl shadow border border-slate-100 md:col-span-2">
+                    <h3 class="font-bold text-slate-700 mb-2"><i class="fa-solid fa-chart-pie text-indigo-600 mr-2"></i>คะแนนจำแนกตามกรอบสมรรถนะ</h3>
+                    <div class="h-48">
+                        <canvas id="competencyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View 3: Exam Environment -->
+        <section id="examView" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-6">
+            <!-- Question Box -->
+            <div class="lg:col-span-3 bg-white p-6 rounded-2xl shadow border border-slate-100 space-y-6">
+                <div class="flex justify-between items-center border-b pb-4">
+                    <span id="questionCategory" class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full"></span>
+                    <span id="questionLevel" class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full"></span>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 id="questionText" class="text-lg font-bold text-slate-800"></h3>
+                    <div id="choicesContainer" class="space-y-3"></div>
+                </div>
+
+                <!-- Navigation Controls -->
+                <div class="flex justify-between items-center pt-4 border-t">
+                    <button onclick="prevQuestion()" id="prevBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> ข้อก่อนหน้า
+                    </button>
+                    <button onclick="nextQuestion()" id="nextBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-sm font-semibold">
+                        ข้อถัดไป <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigator Sidebar (สถานะนำทาง) -->
+            <div class="bg-white p-5 rounded-2xl shadow border border-slate-100 space-y-4">
+                <h4 class="font-bold text-slate-700 text-sm"><i class="fa-solid fa-th mr-2 text-indigo-600"></i>สถานะการทำข้อสอบ (100 ข้อ)</h4>
+                <div id="navigatorGrid" class="grid grid-cols-5 gap-2 max-h-96 overflow-y-auto p-1"></div>
+                <button onclick="submitExam()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl shadow transition">
+                    ส่งข้อสอบ
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Script Application Logic -->
+    <script>
+        // API Endpoint (เปลี่ยนเป็น URL ของ Apps Script Web App ที่ Deploy แล้ว)
+        const API_URL = "https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec";
+
+        let currentUser = null;
+        let currentExam = [];
+        let userAnswers = {};
+        let currentIndex = 0;
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const u = document.getElementById('usernameInput').value;
+            const p = document.getElementById('passwordInput').value;
+            
+            // ตัวอย่าง Bypass Login เบื้องต้น (เชื่อมต่อ API จริงผ่าน doPost)
+            currentUser = { username: u, fullname: u === 'admin' ? 'ผู้ดูแลระบบ' : 'นักศึกษาทดลอง', role: u === 'admin' ? 'Admin' : 'Student' };
+            document.getElementById('userDisplayName').innerText = `${currentUser.fullname} (${currentUser.role})`;
+            document.getElementById('userInfo').classList.remove('hidden');
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.remove('hidden');
+            initChart();
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('userInfo').classList.add('hidden');
+            document.getElementById('dashboardView').classList.add('hidden');
+            document.getElementById('examView').classList.add('hidden');
+            document.getElementById('loginView').classList.remove('hidden');
+        }
+
+        function startExam() {
+            // โหลดและสุ่มข้อสอบ 100 ข้อ
+            document.getElementById('dashboardView').classList.add('hidden');
+            document.getElementById('examView').classList.remove('hidden');
+            
+            // Mocking 100 Questions for Template Interface
+            currentExam = Array.from({length: 100}, (_, i) => ({
+                id: i + 1,
+                category: i < 30 ? "Computing Fundamentals" : (i < 70 ? "Key Applications" : "Living Online"),
+                level: i % 4 === 0 ? "Level 1" : (i % 4 === 1 ? "Level 2" : (i % 4 === 2 ? "Level 3" : "Level 4")),
+                question: `ข้อที่ ${i+1}: โจทย์ทดสอบสมรรถนะดิจิทัลด้านประยุกต์ใช้งานและวิเคราะห์สถานการณ์จำลอง?`,
+                choices: { A: "ตัวเลือกที่ 1", B: "ตัวเลือกที่ 2 (ถูกต้อง)", C: "ตัวเลือกที่ 3", D: "ตัวเลือกที่ 4" },
+                answer: "B"
+            }));
+
+            currentIndex = 0;
+            renderQuestion();
+            renderNavigator();
+        }
+
+        function renderQuestion() {
+            const q = currentExam[currentIndex];
+            document.getElementById('questionCategory').innerText = q.category;
+            document.getElementById('questionLevel').innerText = q.level;
+            document.getElementById('questionText').innerText = q.question;
+            
+            const container = document.getElementById('choicesContainer');
+            container.innerHTML = '';
+            
+            Object.keys(q.choices).forEach(key => {
+                const checked = userAnswers[q.id] === key ? 'checked' : '';
+                const selectedClass = userAnswers[q.id] === key ? 'border-indigo-600 bg-indigo-50' : 'border-slate-200';
+                
+                container.innerHTML += `
+                    <label class="flex items-center p-3.5 border-2 rounded-xl cursor-pointer transition hover:bg-slate-50 ${selectedClass}">
+                        <input type="radio" name="choice" value="${key}" ${checked} onchange="selectChoice('${q.id}', '${key}')" class="w-4 h-4 text-indigo-600">
+                        <span class="ml-3 text-sm font-medium text-slate-700">${key}. ${q.choices[key]}</span>
+                    </label>
+                `;
+            });
+
+            document.getElementById('prevBtn').disabled = currentIndex === 0;
+            document.getElementById('nextBtn').innerText = currentIndex === 99 ? "ตรวจสอบคำตอบ" : "ข้อถัดไป";
+        }
+
+        function selectChoice(qId, key) {
+            userAnswers[qId] = key;
+            renderNavigator();
+            renderQuestion();
+        }
+
+        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); } }
+        function nextQuestion() { if (currentIndex < 99) { currentIndex++; renderQuestion(); } }
+
+        function renderNavigator() {
+            const grid = document.getElementById('navigatorGrid');
+            grid.innerHTML = '';
+            currentExam.forEach((q, idx) => {
+                const isAnswered = userAnswers[q.id] !== undefined;
+                const isCurrent = idx === currentIndex;
+                let btnStyle = isCurrent ? 'ring-2 ring-indigo-600 font-bold' : '';
+                btnStyle += isAnswered ? ' bg-indigo-600 text-white' : ' bg-slate-100 text-slate-600 hover:bg-slate-200';
+                
+                grid.innerHTML += `
+                    <button onclick="goToQuestion(${idx})" class="h-8 text-xs rounded-lg transition ${btnStyle}">
+                        ${idx + 1}
+                    </button>
+                `;
+            });
+        }
+
+        function goToQuestion(idx) { currentIndex = idx; renderQuestion(); }
+
+        function submitExam() {
+            if (confirm("คุณต้องการส่งข้อสอบใช่หรือไม่?")) {
+                let score = 0;
+                currentExam.forEach(q => { if (userAnswers[q.id] === q.answer) score++; });
+                alert(`สอบเสร็จสิ้น! คุณได้คะแนน: ${score} / 100 คะแนน`);
+                document.getElementById('examView').classList.add('hidden');
+                document.getElementById('dashboardView').classList.remove('hidden');
+            }
+        }
+
+        function initChart() {
+            const ctx = document.getElementById('competencyChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Computing Fundamentals', 'Key Applications', 'Living Online'],
+                    datasets: [{
+                        label: 'คะแนนเฉลี่ย (%)',
+                        data: [75, 82, 68],
+                        backgroundColor: ['#6366f1', '#3b82f6', '#10b981']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+            document.getElementById('passPrediction').innerText = "85% (มีแนวโน้มสูงที่จะสอบผ่าน)";
+        }
+    </script>
+</body>
+</html>
