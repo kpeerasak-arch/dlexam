@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Digital Competency System</title>
-    <!-- Tailwind CSS & Chart.js & FontAwesome -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Digital Competency Exam System</title>
+    <!-- Tailwind CSS (Compiled CDN) & Chart.js & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
@@ -24,7 +24,7 @@
         <div class="max-w-7xl mx-auto px-4 py-2.5 flex justify-between items-center gap-2">
             <div class="flex items-center space-x-2 min-w-0">
                 <i class="fa-solid fa-laptop-code text-xl text-yellow-300 shrink-0"></i>
-                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency By : Dr.pkkp</span>
+                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency By : Dr.pkkp 19/8/26:v2</span>
             </div>
             <div id="userInfo" class="hidden flex items-center space-x-2 shrink-0">
                 <span id="userDisplayName" class="text-[11px] sm:text-xs bg-indigo-800 px-2.5 py-1 rounded-full border border-indigo-500 max-w-[150px] sm:max-w-none truncate"></span>
@@ -97,7 +97,7 @@
                 <h2 class="text-xl sm:text-2xl font-bold text-slate-800">เข้าสู่ระบบทดสอบ</h2>
                 <p class="text-slate-500 text-xs sm:text-sm mt-1">กรอบประเมินสมรรถนะดิจิทัล 100 ข้อ</p>
             </div>
-            <form onsubmit="handleLogin(event)" class="space-y-4">
+            <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Username / รหัสนักศึกษา</label>
                     <input type="text" id="usernameInput" required placeholder="เช่น std69001 หรือ admin" class="w-full px-3.5 py-2 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
@@ -293,22 +293,25 @@
 
     </main>
 
+    <!-- Global JavaScript Scope -->
     <script>
         const API_URL = "https://script.google.com/macros/s/AKfycbzZgxJbRARX8i24E4Im7CDCJqiIaUVXrjtmWecpftWYfGeiN9B6-FWbPZChFX8oO8vzcA/exec"; 
 
-        let currentUser = null;
-        let currentExam = [];
-        let userAnswers = {};
-        let currentIndex = 0;
-        let chartInstance = null;
-        let allAdminLogs = [];
+        window.currentUser = null;
+        window.currentExam = [];
+        window.userAnswers = {};
+        window.currentIndex = 0;
+        window.chartInstance = null;
+        window.allAdminLogs = [];
 
-        let violationCount = 0;
-        const MAX_VIOLATIONS = 3;
-        let isExamActive = false;
+        window.violationCount = 0;
+        window.MAX_VIOLATIONS = 3;
+        window.isExamActive = false;
 
-        async function handleLogin(e) {
+        // ประกาศ handleLogin เป็น Global Function บน Window Object โดยตรง
+        window.handleLogin = async function(e) {
             if (e && e.preventDefault) e.preventDefault();
+            
             const u = document.getElementById('usernameInput').value.trim();
             const p = document.getElementById('passwordInput').value.trim();
             const btn = document.getElementById('loginBtn');
@@ -325,9 +328,9 @@
                 const data = await res.json();
 
                 if (data.status === 'success') {
-                    currentUser = data.user;
-                    const roleText = currentUser.role ? currentUser.role : 'Student';
-                    document.getElementById('userDisplayName').innerText = `${currentUser.fullname}`;
+                    window.currentUser = data.user;
+                    const roleText = window.currentUser.role ? window.currentUser.role : 'Student';
+                    document.getElementById('userDisplayName').innerText = `${window.currentUser.fullname}`;
                     document.getElementById('userInfo').classList.remove('hidden');
                     document.getElementById('loginView').classList.add('hidden');
 
@@ -344,41 +347,41 @@
                 }
             } catch (err) {
                 console.error(err);
-                alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาตรวจสอบ API_URL');
+                alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการตั้งค่า Apps Script');
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = 'เข้าสู่ระบบ';
             }
-        }
+        };
 
-        function logout() {
-            currentUser = null;
+        window.logout = function() {
+            window.currentUser = null;
             document.getElementById('userInfo').classList.add('hidden');
             document.getElementById('studentDashboardView').classList.add('hidden');
             document.getElementById('adminDashboardView').classList.add('hidden');
             document.getElementById('examView').classList.add('hidden');
             document.getElementById('loginView').classList.remove('hidden');
-        }
+        };
 
-        function openRulesModal() {
+        window.openRulesModal = function() {
             document.getElementById('agreeCheckbox').checked = false;
             document.getElementById('confirmStartBtn').disabled = true;
             document.getElementById('examRulesModal').classList.remove('hidden');
-        }
+        };
 
-        function closeRulesModal() {
+        window.closeRulesModal = function() {
             document.getElementById('examRulesModal').classList.add('hidden');
-        }
+        };
 
-        function toggleStartBtn() {
+        window.toggleStartBtn = function() {
             const isChecked = document.getElementById('agreeCheckbox').checked;
             document.getElementById('confirmStartBtn').disabled = !isChecked;
-        }
+        };
 
-        function confirmAndStartExam() {
+        window.confirmAndStartExam = function() {
             closeRulesModal();
             startExam();
-        }
+        };
 
         function enterFullscreen() {
             const elem = document.documentElement;
@@ -393,8 +396,8 @@
         }
 
         function enableAntiCheating() {
-            isExamActive = true;
-            violationCount = 0;
+            window.isExamActive = true;
+            window.violationCount = 0;
             enterFullscreen();
 
             document.addEventListener('contextmenu', preventDefaultAction);
@@ -408,7 +411,7 @@
         }
 
         function disableAntiCheating() {
-            isExamActive = false;
+            window.isExamActive = false;
             document.removeEventListener('contextmenu', preventDefaultAction);
             document.removeEventListener('copy', preventDefaultAction);
             document.removeEventListener('paste', preventDefaultAction);
@@ -421,11 +424,11 @@
         }
 
         function preventDefaultAction(e) {
-            if (isExamActive) e.preventDefault();
+            if (window.isExamActive) e.preventDefault();
         }
 
         function handleKeyRestrictions(e) {
-            if (!isExamActive) return;
+            if (!window.isExamActive) return;
 
             if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e.ctrlKey && e.keyCode === 85)) {
                 e.preventDefault();
@@ -442,30 +445,30 @@
         }
 
         function handleVisibilityChange() {
-            if (isExamActive && document.hidden) {
+            if (window.isExamActive && document.hidden) {
                 recordViolation("สลับแท็บหรือออกจากหน้าต่างข้อสอบ");
             }
         }
 
         function handleWindowBlur() {
-            if (isExamActive) {
+            if (window.isExamActive) {
                 recordViolation("หลุดโฟกัสจากหน้าต่างทำข้อสอบ");
             }
         }
 
         function handleFullscreenChange() {
-            if (isExamActive && !document.fullscreenElement) {
+            if (window.isExamActive && !document.fullscreenElement) {
                 recordViolation("ออกจากโหมดเต็มหน้าจอ (Fullscreen)");
                 setTimeout(enterFullscreen, 1000);
             }
         }
 
         function recordViolation(reason) {
-            if (!isExamActive) return;
-            violationCount++;
-            alert(`⚠️ คำเตือนการทุจริต ครั้งที่ ${violationCount}/${MAX_VIOLATIONS}!\nสาเหตุ: ${reason}\nระบบไม่อนุญาตให้สืบค้นข้อมูลภายนอกขณะทำข้อสอบ`);
+            if (!window.isExamActive) return;
+            window.violationCount++;
+            alert(`⚠️ คำเตือนการทุจริต ครั้งที่ ${window.violationCount}/${window.MAX_VIOLATIONS}!\nสาเหตุ: ${reason}\nระบบไม่อนุญาตให้สืบค้นข้อมูลภายนอกขณะทำข้อสอบ`);
 
-            if (violationCount >= MAX_VIOLATIONS) {
+            if (window.violationCount >= window.MAX_VIOLATIONS) {
                 alert("❌ คุณละเมิดระเบียบการสอบเกินกำหนด (3 ครั้ง) ระบบจะทำการส่งข้อสอบโดยอัตโนมัติทันที!");
                 submitExam();
             }
@@ -476,7 +479,7 @@
                 const res = await fetch(API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify({ action: 'getUserHistory', username: currentUser.username })
+                    body: JSON.stringify({ action: 'getUserHistory', username: window.currentUser.username })
                 });
                 const data = await res.json();
                 
@@ -508,20 +511,20 @@
                 const data = await res.json();
                 
                 if (data.status === 'success') {
-                    allAdminLogs = data.history || [];
+                    window.allAdminLogs = data.history || [];
                     
-                    const total = allAdminLogs.length;
-                    const passCount = allAdminLogs.filter(h => String(h.passStatus).toUpperCase() === 'PASS').length;
+                    const total = window.allAdminLogs.length;
+                    const passCount = window.allAdminLogs.filter(h => String(h.passStatus).toUpperCase() === 'PASS').length;
                     const passRate = total > 0 ? Math.round((passCount / total) * 100) : 0;
-                    const avgScore = total > 0 ? Math.round(allAdminLogs.reduce((acc, curr) => acc + Number(curr.score), 0) / total) : 0;
-                    const totalViolations = allAdminLogs.reduce((acc, curr) => acc + Number(curr.violations || 0), 0);
+                    const avgScore = total > 0 ? Math.round(window.allAdminLogs.reduce((acc, curr) => acc + Number(curr.score), 0) / total) : 0;
+                    const totalViolations = window.allAdminLogs.reduce((acc, curr) => acc + Number(curr.violations || 0), 0);
 
                     document.getElementById('adminTotalExams').innerText = `${total} ครั้ง`;
                     document.getElementById('adminPassRate').innerText = `${passRate}%`;
                     document.getElementById('adminAvgScore').innerText = `${avgScore} / 100`;
                     document.getElementById('adminTotalViolations').innerText = `${totalViolations} ครั้ง`;
 
-                    renderAdminTable(allAdminLogs);
+                    renderAdminTable(window.allAdminLogs);
                 }
             } catch (err) { console.error(err); }
         }
@@ -580,14 +583,14 @@
             });
         }
 
-        function filterAdminTable() {
+        window.filterAdminTable = function() {
             const term = document.getElementById('adminSearchInput').value.toLowerCase();
-            const filtered = allAdminLogs.filter(l => 
+            const filtered = window.allAdminLogs.filter(l => 
                 String(l.username).toLowerCase().includes(term) || 
                 String(l.passStatus).toLowerCase().includes(term)
             );
             renderAdminTable(filtered);
-        }
+        };
 
         function updateBreakdownUI(lastResult) {
             let cf = 0, ka = 0, lo = 0;
@@ -632,7 +635,7 @@
                 });
                 const data = await res.json();
                 if (data.status === 'success' && data.questions.length > 0) {
-                    currentExam = data.questions;
+                    window.currentExam = data.questions;
                 } else {
                     generateFallbackExam();
                 }
@@ -640,14 +643,14 @@
                 generateFallbackExam();
             }
 
-            currentIndex = 0;
-            userAnswers = {};
+            window.currentIndex = 0;
+            window.userAnswers = {};
             renderQuestion();
             renderNavigator();
         }
 
         function generateFallbackExam() {
-            currentExam = Array.from({length: 100}, (_, i) => ({
+            window.currentExam = Array.from({length: 100}, (_, i) => ({
                 ID: `Q${i+1}`,
                 Category_ID: i < 30 ? "CF_MOB" : (i < 70 ? "KA_SS" : "LO_NET"),
                 Domain_Name: i < 30 ? "Computing Fundamentals" : (i < 70 ? "Key Applications" : "Living Online"),
@@ -659,10 +662,10 @@
         }
 
         function renderQuestion() {
-            const q = currentExam[currentIndex];
+            const q = window.currentExam[window.currentIndex];
             document.getElementById('questionCategory').innerText = q.Domain_Name || q.Category_Name || "General";
             document.getElementById('questionLevel').innerText = q.Level || "Level 1";
-            document.getElementById('questionText').innerText = `${currentIndex + 1}. ${q.Question}`;
+            document.getElementById('questionText').innerText = `${window.currentIndex + 1}. ${q.Question}`;
             
             const container = document.getElementById('choicesContainer');
             container.innerHTML = '';
@@ -670,41 +673,41 @@
             const choices = { A: q.Choice_A, B: q.Choice_B, C: q.Choice_C, D: q.Choice_D };
             
             Object.keys(choices).forEach(key => {
-                const checked = userAnswers[q.ID || currentIndex] === key ? 'checked' : '';
-                const selectedClass = userAnswers[q.ID || currentIndex] === key ? 'border-indigo-600 bg-indigo-50' : 'border-slate-200';
+                const checked = window.userAnswers[q.ID || window.currentIndex] === key ? 'checked' : '';
+                const selectedClass = window.userAnswers[q.ID || window.currentIndex] === key ? 'border-indigo-600 bg-indigo-50' : 'border-slate-200';
                 
                 container.innerHTML += `
                     <label class="flex items-center p-3 border-2 rounded-xl cursor-pointer transition hover:bg-slate-50 ${selectedClass}">
-                        <input type="radio" name="choice" value="${key}" ${checked} onchange="selectChoice('${q.ID || currentIndex}', '${key}')" class="w-4 h-4 text-indigo-600 shrink-0">
+                        <input type="radio" name="choice" value="${key}" ${checked} onchange="selectChoice('${q.ID || window.currentIndex}', '${key}')" class="w-4 h-4 text-indigo-600 shrink-0">
                         <span class="ml-2.5 text-xs sm:text-sm font-medium text-slate-700">${key}. ${choices[key]}</span>
                     </label>
                 `;
             });
 
-            document.getElementById('prevBtn').disabled = currentIndex === 0;
-            document.getElementById('nextBtn').innerText = currentIndex === (currentExam.length - 1) ? "ตรวจสอบคำตอบ" : "ข้อถัดไป";
+            document.getElementById('prevBtn').disabled = window.currentIndex === 0;
+            document.getElementById('nextBtn').innerText = window.currentIndex === (window.currentExam.length - 1) ? "ตรวจสอบคำตอบ" : "ข้อถัดไป";
         }
 
-        function selectChoice(qId, key) {
-            userAnswers[qId] = key;
+        window.selectChoice = function(qId, key) {
+            window.userAnswers[qId] = key;
             renderNavigator();
             renderQuestion();
-        }
+        };
 
-        function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); } }
-        function nextQuestion() { if (currentIndex < currentExam.length - 1) { currentIndex++; renderQuestion(); } }
+        window.prevQuestion = function() { if (window.currentIndex > 0) { window.currentIndex--; renderQuestion(); } };
+        window.nextQuestion = function() { if (window.currentIndex < window.currentExam.length - 1) { window.currentIndex++; renderQuestion(); } };
 
         function renderNavigator() {
             const grid = document.getElementById('navigatorGrid');
             grid.innerHTML = '';
             let count = 0;
 
-            currentExam.forEach((q, idx) => {
+            window.currentExam.forEach((q, idx) => {
                 const qKey = q.ID || idx;
-                const isAnswered = userAnswers[qKey] !== undefined;
+                const isAnswered = window.userAnswers[qKey] !== undefined;
                 if (isAnswered) count++;
 
-                const isCurrent = idx === currentIndex;
+                const isCurrent = idx === window.currentIndex;
                 let btnStyle = isCurrent ? 'ring-2 ring-indigo-600 font-bold' : '';
                 btnStyle += isAnswered ? ' bg-indigo-600 text-white' : ' bg-slate-100 text-slate-600 hover:bg-slate-200';
                 
@@ -715,12 +718,12 @@
                 `;
             });
 
-            document.getElementById('answeredCount').innerText = `${count}/${currentExam.length}`;
+            document.getElementById('answeredCount').innerText = `${count}/${window.currentExam.length}`;
         }
 
-        function goToQuestion(idx) { currentIndex = idx; renderQuestion(); }
+        window.goToQuestion = function(idx) { window.currentIndex = idx; renderQuestion(); };
 
-        async function submitExam() {
+        window.submitExam = async function() {
             if (!confirm("คุณต้องการส่งข้อสอบใช่หรือไม่?")) return;
 
             disableAntiCheating();
@@ -731,11 +734,11 @@
             let subCounts = { mob:0, hdw:0, sw:0, sec:0, os:0, doc:0, ss:0, pre:0, db:0, net:0, cit:0 };
             let subCorrect = { mob:0, hdw:0, sw:0, sec:0, os:0, doc:0, ss:0, pre:0, db:0, net:0, cit:0 };
 
-            currentExam.forEach((q, idx) => {
+            window.currentExam.forEach((q, idx) => {
                 const qKey = q.ID || idx;
                 const catId = String(q.Category_ID || q.Category_Name || '').toUpperCase();
                 const domain = String(q.Domain_Name || q.Category_Name || '').toUpperCase();
-                const isCorrect = userAnswers[qKey] === String(q.Answer).trim();
+                const isCorrect = window.userAnswers[qKey] === String(q.Answer).trim();
 
                 let key = '';
                 if (catId.includes('MOB')) key = 'mob';
@@ -774,7 +777,7 @@
 
             const payload = {
                 action: "saveResult",
-                username: currentUser ? currentUser.username : "std69001",
+                username: window.currentUser ? window.currentUser.username : "std69001",
                 totalScore: totalScore,
                 percentage: percentage,
                 passStatus: passStatus,
@@ -783,7 +786,7 @@
                 loScore: loScore,
                 subBreakdown: subBreakdown,
                 predictionTrend: predictionTrend,
-                violations: violationCount
+                violations: window.violationCount
             };
 
             try {
@@ -795,7 +798,7 @@
                 const result = await res.json();
 
                 if (result.status === "success") {
-                    alert(`บันทึกผลการสอบเรียบร้อย!\nคะแนนที่ได้: ${totalScore}/100\nสถานะ: ${passStatus}\nจำนวนการเตือนสลับจอ: ${violationCount} ครั้ง`);
+                    alert(`บันทึกผลการสอบเรียบร้อย!\nคะแนนที่ได้: ${totalScore}/100\nสถานะ: ${passStatus}\nจำนวนการเตือนสลับจอ: ${window.violationCount} ครั้ง`);
                     document.getElementById('examView').classList.add('hidden');
                     document.getElementById('studentDashboardView').classList.remove('hidden');
                     loadStudentDashboardHistory();
@@ -804,15 +807,15 @@
                 }
             } catch (err) {
                 console.error(err);
-                alert("ไม่สามารถบันทึกผลได้ กรุณาตรวจสอบการตั้งค่า Deploy ของ Apps Script");
+                alert("ไม่สามารถบันทึกผลได้ กรุณาตรวจสอบการตั้งค่า Apps Script");
             }
-        }
+        };
 
         function initRadarChart(mainScores) {
             const ctx = document.getElementById('competencyChart').getContext('2d');
-            if (chartInstance) chartInstance.destroy();
+            if (window.chartInstance) window.chartInstance.destroy();
 
-            chartInstance = new Chart(ctx, {
+            window.chartInstance = new Chart(ctx, {
                 type: 'radar',
                 data: {
                     labels: [
