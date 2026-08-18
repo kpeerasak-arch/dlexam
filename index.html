@@ -3,60 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Competency Testing System</title>
-    <!-- Tailwind CSS & Chart.js -->
+    <title>Digital Competency Exam System</title>
+    <!-- Tailwind CSS & Chart.js & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col">
 
-    <!-- Header Navigation -->
-    <nav class="bg-indigo-700 text-white shadow-lg sticky top-0 z-50">
+    <!-- Top Navbar -->
+    <nav class="bg-indigo-700 text-white shadow-md sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center space-x-3">
                 <i class="fa-solid fa-laptop-code text-2xl text-yellow-300"></i>
-                <span class="font-bold text-xl tracking-wide">Digital Competency Exam</span>
+                <span class="font-bold text-lg md:text-xl tracking-wide">Digital Competency Exam</span>
             </div>
             <div id="userInfo" class="hidden flex items-center space-x-4">
-                <span id="userDisplayName" class="text-sm bg-indigo-800 px-3 py-1 rounded-full border border-indigo-500"></span>
-                <button onclick="logout()" class="text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg transition">
-                    <i class="fa-solid fa-sign-out-alt mr-1"></i> ออกจากระบบ
+                <span id="userDisplayName" class="text-xs md:text-sm bg-indigo-800 px-3 py-1 rounded-full border border-indigo-500"></span>
+                <button onclick="logout()" class="text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg transition shadow">
+                    <i class="fa-solid fa-sign-out-alt"></i> ออกจากระบบ
                 </button>
             </div>
         </div>
     </nav>
 
-    <!-- Main Content Container -->
+    <!-- Main Content -->
     <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
         
         <!-- View 1: Login Form -->
         <section id="loginView" class="max-w-md mx-auto my-12 bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
             <div class="text-center mb-6">
-                <h2 class="text-2xl font-bold text-indigo-900">เข้าสู่ระบบทดสอบ</h2>
-                <p class="text-slate-500 text-sm mt-1">ประเมินสมรรถนะดิจิทัลตามกรอบมาตรฐาน</p>
+                <div class="inline-block p-4 bg-indigo-50 text-indigo-600 rounded-full mb-3">
+                    <i class="fa-solid fa-user-shield text-3xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">เข้าสู่ระบบทดสอบ</h2>
+                <p class="text-slate-500 text-sm mt-1">กรอบประเมินสมรรถนะดิจิทัล 100 ข้อ</p>
             </div>
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-1">Username / รหัสนักศึกษา</label>
-                    <input type="text" id="usernameInput" required class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <input type="text" id="usernameInput" required placeholder="เช่น std69001" class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 mb-1">Password</label>
-                    <input type="password" id="passwordInput" required class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <input type="password" id="passwordInput" required placeholder="รหัสผ่าน" class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
-                <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition">
+                <button type="submit" id="loginBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition">
                     เข้าสู่ระบบ
                 </button>
             </form>
         </section>
 
-        <!-- View 2: Dashboard & Test Launcher -->
+        <!-- View 2: Dashboard -->
         <section id="dashboardView" class="hidden space-y-6">
-            <!-- Welcome Banner & Start Exam -->
             <div class="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
                 <div>
-                    <h1 class="text-2xl font-bold">ยินดีต้อนรับสู่ระบบประเมินสมรรถนะดิจิทัล</h1>
+                    <h1 class="text-2xl font-bold">แผงควบคุมการสอบประเมิน</h1>
                     <p class="text-indigo-100 mt-1 text-sm">การทดสอบ 100 ข้อ (Computing Fundamentals, Key Applications, Living Online)</p>
                 </div>
                 <button onclick="startExam()" class="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold px-6 py-3 rounded-xl shadow-md transition transform hover:scale-105">
@@ -64,40 +66,40 @@
                 </button>
             </div>
 
-            <!-- Analytics Dashboard -->
+            <!-- Stats & Analytics Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Trend & Prediction Card -->
-                <div class="bg-white p-5 rounded-2xl shadow border border-slate-100">
-                    <h3 class="font-bold text-slate-700 mb-2"><i class="fa-solid fa-chart-line text-indigo-600 mr-2"></i>แนวโน้มผลการสอบ</h3>
-                    <div class="text-3xl font-extrabold text-indigo-600 mt-2" id="passPrediction">--</div>
-                    <p class="text-xs text-slate-500 mt-1" id="predictionDetails">คำนวณจากสถิติการสอบที่ผ่านมา</p>
+                <div class="bg-white p-5 rounded-2xl shadow border border-slate-100 flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-bold text-slate-700 mb-2"><i class="fa-solid fa-chart-line text-indigo-600 mr-2"></i>แนวโน้มผลการสอบผ่าน</h3>
+                        <div class="text-3xl font-extrabold text-indigo-600 mt-2" id="passPrediction">--</div>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-4" id="predictionDetails">วิเคราะห์สถิติคะแนนสะสมของผู้เรียน</p>
                 </div>
 
-                <!-- Competency Breakdown Radar/Bar Chart -->
                 <div class="bg-white p-5 rounded-2xl shadow border border-slate-100 md:col-span-2">
-                    <h3 class="font-bold text-slate-700 mb-2"><i class="fa-solid fa-chart-pie text-indigo-600 mr-2"></i>คะแนนจำแนกตามกรอบสมรรถนะ</h3>
-                    <div class="h-48">
+                    <h3 class="font-bold text-slate-700 mb-2"><i class="fa-solid fa-chart-bar text-indigo-600 mr-2"></i>พัฒนาการคะแนนตามกรอบสมรรถนะ</h3>
+                    <div class="h-48 relative">
                         <canvas id="competencyChart"></canvas>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- View 3: Exam Environment -->
+        <!-- View 3: Exam Workspace -->
         <section id="examView" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <!-- Question Box -->
+            <!-- Question & Choices Area -->
             <div class="lg:col-span-3 bg-white p-6 rounded-2xl shadow border border-slate-100 space-y-6">
-                <div class="flex justify-between items-center border-b pb-4">
+                <div class="flex flex-wrap justify-between items-center gap-2 border-b pb-4">
                     <span id="questionCategory" class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full"></span>
                     <span id="questionLevel" class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full"></span>
                 </div>
 
                 <div class="space-y-4">
-                    <h3 id="questionText" class="text-lg font-bold text-slate-800"></h3>
+                    <h3 id="questionText" class="text-lg font-bold text-slate-800 min-h-[50px]"></h3>
                     <div id="choicesContainer" class="space-y-3"></div>
                 </div>
 
-                <!-- Navigation Controls -->
+                <!-- Control Buttons -->
                 <div class="flex justify-between items-center pt-4 border-t">
                     <button onclick="prevQuestion()" id="prevBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold">
                         <i class="fa-solid fa-arrow-left mr-1"></i> ข้อก่อนหน้า
@@ -108,39 +110,65 @@
                 </div>
             </div>
 
-            <!-- Navigator Sidebar (สถานะนำทาง) -->
+            <!-- Navigator Grid (สถานะนำทาง) -->
             <div class="bg-white p-5 rounded-2xl shadow border border-slate-100 space-y-4">
-                <h4 class="font-bold text-slate-700 text-sm"><i class="fa-solid fa-th mr-2 text-indigo-600"></i>สถานะการทำข้อสอบ (100 ข้อ)</h4>
-                <div id="navigatorGrid" class="grid grid-cols-5 gap-2 max-h-96 overflow-y-auto p-1"></div>
+                <h4 class="font-bold text-slate-700 text-sm flex items-center justify-between">
+                    <span><i class="fa-solid fa-th mr-2 text-indigo-600"></i>สถานะนำทาง</span>
+                    <span id="answeredCount" class="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-bold">0/100</span>
+                </h4>
+                <div id="navigatorGrid" class="grid grid-cols-5 gap-1.5 max-h-96 overflow-y-auto p-1 border rounded-xl"></div>
                 <button onclick="submitExam()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl shadow transition">
-                    ส่งข้อสอบ
+                    <i class="fa-solid fa-paper-plane mr-2"></i> ส่งข้อสอบ
                 </button>
             </div>
         </section>
+
     </main>
 
-    <!-- Script Application Logic -->
     <script>
-        // API Endpoint (เปลี่ยนเป็น URL ของ Apps Script Web App ที่ Deploy แล้ว)
-        const API_URL = "https://script.google.com/macros/s/AKfycbzZgxJbRARX8i24E4Im7CDCJqiIaUVXrjtmWecpftWYfGeiN9B6-FWbPZChFX8oO8vzcA/exec";
+        // *** สำคัญ: นำ URL ที่ Deploy ได้จาก Apps Script มาวางที่นี่ ***
+        const API_URL = "https://script.google.com/macros/s/AKfycbzZgxJbRARX8i24E4Im7CDCJqiIaUVXrjtmWecpftWYfGeiN9B6-FWbPZChFX8oO8vzcA/exec"; 
 
         let currentUser = null;
         let currentExam = [];
         let userAnswers = {};
         let currentIndex = 0;
+        let chartInstance = null;
 
-        function handleLogin(e) {
+        async function handleLogin(e) {
             e.preventDefault();
-            const u = document.getElementById('usernameInput').value;
-            const p = document.getElementById('passwordInput').value;
-            
-            // ตัวอย่าง Bypass Login เบื้องต้น (เชื่อมต่อ API จริงผ่าน doPost)
-            currentUser = { username: u, fullname: u === 'admin' ? 'ผู้ดูแลระบบ' : 'นักศึกษาทดลอง', role: u === 'admin' ? 'Admin' : 'Student' };
-            document.getElementById('userDisplayName').innerText = `${currentUser.fullname} (${currentUser.role})`;
-            document.getElementById('userInfo').classList.remove('hidden');
-            document.getElementById('loginView').classList.add('hidden');
-            document.getElementById('dashboardView').classList.remove('hidden');
-            initChart();
+            const u = document.getElementById('usernameInput').value.trim();
+            const p = document.getElementById('passwordInput').value.trim();
+            const btn = document.getElementById('loginBtn');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i>กำลังเข้าสู่ระบบ...';
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'login', username: u, password: p })
+                });
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    currentUser = data.user;
+                    document.getElementById('userDisplayName').innerText = `${currentUser.fullname} (${currentUser.role})`;
+                    document.getElementById('userInfo').classList.remove('hidden');
+                    document.getElementById('loginView').classList.add('hidden');
+                    document.getElementById('dashboardView').classList.remove('hidden');
+                    loadDashboardHistory();
+                } else {
+                    alert(data.message || 'เข้าสู่ระบบไม่สำเร็จ');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาตรวจสอบ API_URL');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'เข้าสู่ระบบ';
+            }
         }
 
         function logout() {
@@ -151,49 +179,90 @@
             document.getElementById('loginView').classList.remove('hidden');
         }
 
-        function startExam() {
-            // โหลดและสุ่มข้อสอบ 100 ข้อ
+        async function loadDashboardHistory() {
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'getUserHistory', username: currentUser.username })
+                });
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    const history = data.history || [];
+                    if (history.length > 0) {
+                        const last = history[history.length - 1];
+                        document.getElementById('passPrediction').innerText = `${last.percentage} (${last.trend})`;
+                    } else {
+                        document.getElementById('passPrediction').innerText = "ยังไม่มีประวัติการสอบ";
+                    }
+                    initChart(history);
+                }
+            } catch (err) { console.error(err); }
+        }
+
+        async function startExam() {
             document.getElementById('dashboardView').classList.add('hidden');
             document.getElementById('examView').classList.remove('hidden');
             
-            // Mocking 100 Questions for Template Interface
-            currentExam = Array.from({length: 100}, (_, i) => ({
-                id: i + 1,
-                category: i < 30 ? "Computing Fundamentals" : (i < 70 ? "Key Applications" : "Living Online"),
-                level: i % 4 === 0 ? "Level 1" : (i % 4 === 1 ? "Level 2" : (i % 4 === 2 ? "Level 3" : "Level 4")),
-                question: `ข้อที่ ${i+1}: โจทย์ทดสอบสมรรถนะดิจิทัลด้านประยุกต์ใช้งานและวิเคราะห์สถานการณ์จำลอง?`,
-                choices: { A: "ตัวเลือกที่ 1", B: "ตัวเลือกที่ 2 (ถูกต้อง)", C: "ตัวเลือกที่ 3", D: "ตัวเลือกที่ 4" },
-                answer: "B"
-            }));
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ action: 'get100Questions' })
+                });
+                const data = await res.json();
+                if (data.status === 'success' && data.questions.length > 0) {
+                    currentExam = data.questions;
+                } else {
+                    generateFallbackExam();
+                }
+            } catch (e) {
+                generateFallbackExam();
+            }
 
             currentIndex = 0;
+            userAnswers = {};
             renderQuestion();
             renderNavigator();
         }
 
+        function generateFallbackExam() {
+            currentExam = Array.from({length: 100}, (_, i) => ({
+                ID: `Q${i+1}`,
+                Domain_Name: i < 30 ? "Computing Fundamentals" : (i < 70 ? "Key Applications" : "Living Online"),
+                Level: i % 4 === 0 ? "Level 1" : (i % 4 === 1 ? "Level 2" : (i % 4 === 2 ? "Level 3" : "Level 4")),
+                Question: `ข้อที่ ${i+1}: โจทย์ทดสอบสมรรถนะดิจิทัลวิเคราะห์สถานการณ์จำลอง (ข้อสอบสำรอง)?`,
+                Choice_A: "ตัวเลือก A", Choice_B: "ตัวเลือก B (ถูกต้อง)", Choice_C: "ตัวเลือก C", Choice_D: "ตัวเลือก D",
+                Answer: "B"
+            }));
+        }
+
         function renderQuestion() {
             const q = currentExam[currentIndex];
-            document.getElementById('questionCategory').innerText = q.category;
-            document.getElementById('questionLevel').innerText = q.level;
-            document.getElementById('questionText').innerText = q.question;
+            document.getElementById('questionCategory').innerText = q.Domain_Name || q.Category_Name || "General";
+            document.getElementById('questionLevel').innerText = q.Level || "Level 1";
+            document.getElementById('questionText').innerText = `${currentIndex + 1}. ${q.Question}`;
             
             const container = document.getElementById('choicesContainer');
             container.innerHTML = '';
             
-            Object.keys(q.choices).forEach(key => {
-                const checked = userAnswers[q.id] === key ? 'checked' : '';
-                const selectedClass = userAnswers[q.id] === key ? 'border-indigo-600 bg-indigo-50' : 'border-slate-200';
+            const choices = { A: q.Choice_A, B: q.Choice_B, C: q.Choice_C, D: q.Choice_D };
+            
+            Object.keys(choices).forEach(key => {
+                const checked = userAnswers[q.ID || currentIndex] === key ? 'checked' : '';
+                const selectedClass = userAnswers[q.ID || currentIndex] === key ? 'border-indigo-600 bg-indigo-50' : 'border-slate-200';
                 
                 container.innerHTML += `
                     <label class="flex items-center p-3.5 border-2 rounded-xl cursor-pointer transition hover:bg-slate-50 ${selectedClass}">
-                        <input type="radio" name="choice" value="${key}" ${checked} onchange="selectChoice('${q.id}', '${key}')" class="w-4 h-4 text-indigo-600">
-                        <span class="ml-3 text-sm font-medium text-slate-700">${key}. ${q.choices[key]}</span>
+                        <input type="radio" name="choice" value="${key}" ${checked} onchange="selectChoice('${q.ID || currentIndex}', '${key}')" class="w-4 h-4 text-indigo-600">
+                        <span class="ml-3 text-sm font-medium text-slate-700">${key}. ${choices[key]}</span>
                     </label>
                 `;
             });
 
             document.getElementById('prevBtn').disabled = currentIndex === 0;
-            document.getElementById('nextBtn').innerText = currentIndex === 99 ? "ตรวจสอบคำตอบ" : "ข้อถัดไป";
+            document.getElementById('nextBtn').innerText = currentIndex === (currentExam.length - 1) ? "ตรวจสอบคำตอบ" : "ข้อถัดไป";
         }
 
         function selectChoice(qId, key) {
@@ -203,13 +272,18 @@
         }
 
         function prevQuestion() { if (currentIndex > 0) { currentIndex--; renderQuestion(); } }
-        function nextQuestion() { if (currentIndex < 99) { currentIndex++; renderQuestion(); } }
+        function nextQuestion() { if (currentIndex < currentExam.length - 1) { currentIndex++; renderQuestion(); } }
 
         function renderNavigator() {
             const grid = document.getElementById('navigatorGrid');
             grid.innerHTML = '';
+            let count = 0;
+
             currentExam.forEach((q, idx) => {
-                const isAnswered = userAnswers[q.id] !== undefined;
+                const qKey = q.ID || idx;
+                const isAnswered = userAnswers[qKey] !== undefined;
+                if (isAnswered) count++;
+
                 const isCurrent = idx === currentIndex;
                 let btnStyle = isCurrent ? 'ring-2 ring-indigo-600 font-bold' : '';
                 btnStyle += isAnswered ? ' bg-indigo-600 text-white' : ' bg-slate-100 text-slate-600 hover:bg-slate-200';
@@ -220,35 +294,93 @@
                     </button>
                 `;
             });
+
+            document.getElementById('answeredCount').innerText = `${count}/${currentExam.length}`;
         }
 
         function goToQuestion(idx) { currentIndex = idx; renderQuestion(); }
 
-        function submitExam() {
-            if (confirm("คุณต้องการส่งข้อสอบใช่หรือไม่?")) {
-                let score = 0;
-                currentExam.forEach(q => { if (userAnswers[q.id] === q.answer) score++; });
-                alert(`สอบเสร็จสิ้น! คุณได้คะแนน: ${score} / 100 คะแนน`);
-                document.getElementById('examView').classList.add('hidden');
-                document.getElementById('dashboardView').classList.remove('hidden');
+        async function submitExam() {
+            if (!confirm("คุณต้องการส่งข้อสอบใช่หรือไม่?")) return;
+
+            let totalScore = 0;
+            let cfScore = 0, kaScore = 0, loScore = 0;
+
+            currentExam.forEach((q, idx) => {
+                const qKey = q.ID || idx;
+                if (userAnswers[qKey] === String(q.Answer).trim()) {
+                    totalScore++;
+                    const domain = String(q.Domain_Name || q.Category_Name);
+                    if (domain.includes("Computing")) cfScore++;
+                    else if (domain.includes("Key")) kaScore++;
+                    else loScore++;
+                }
+            });
+
+            const percentage = totalScore;
+            const passStatus = percentage >= 60 ? "PASS" : "FAIL";
+            const predictionTrend = percentage >= 60 ? "มีแนวโน้มสอบผ่านสูง" : "ต้องปรับปรุงเพิ่มเติม";
+
+            const payload = {
+                action: "saveResult",
+                username: currentUser ? currentUser.username : "std69001",
+                totalScore: totalScore,
+                percentage: percentage,
+                passStatus: passStatus,
+                cfScore: cfScore,
+                kaScore: kaScore,
+                loScore: loScore,
+                predictionTrend: predictionTrend
+            };
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload)
+                });
+                const result = await res.json();
+
+                if (result.status === "success") {
+                    alert(`บันทึกผลการสอบเรียบร้อย!\nคะแนนที่ได้: ${totalScore}/100\nสถานะ: ${passStatus}`);
+                    document.getElementById('examView').classList.add('hidden');
+                    document.getElementById('dashboardView').classList.remove('hidden');
+                    loadDashboardHistory();
+                } else {
+                    alert("ข้อผิดพลาดในการบันทึก: " + result.message);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("ไม่สามารถบันทึกผลได้ กรุณาตรวจสอบการตั้งค่า Deploy ของ Apps Script");
             }
         }
 
-        function initChart() {
+        function initChart(history) {
             const ctx = document.getElementById('competencyChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'bar',
+            if (chartInstance) chartInstance.destroy();
+
+            const labels = history.length > 0 ? history.map((_, i) => `ครั้งที่ ${i+1}`) : ['ทดสอบ 1'];
+            const scores = history.length > 0 ? history.map(h => parseFloat(h.percentage)) : [0];
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
                 data: {
-                    labels: ['Computing Fundamentals', 'Key Applications', 'Living Online'],
+                    labels: labels,
                     datasets: [{
-                        label: 'คะแนนเฉลี่ย (%)',
-                        data: [75, 82, 68],
-                        backgroundColor: ['#6366f1', '#3b82f6', '#10b981']
+                        label: 'คะแนนการสอบ (%)',
+                        data: scores,
+                        borderColor: '#4f46e5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        fill: true,
+                        tension: 0.3
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { min: 0, max: 100 } }
+                }
             });
-            document.getElementById('passPrediction').innerText = "85% (มีแนวโน้มสูงที่จะสอบผ่าน)";
         }
     </script>
 </body>
