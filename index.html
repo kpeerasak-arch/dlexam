@@ -24,7 +24,7 @@
         <div class="max-w-7xl mx-auto px-4 py-2.5 flex justify-between items-center gap-2">
             <div class="flex items-center space-x-2 min-w-0">
                 <i class="fa-solid fa-laptop-code text-xl text-yellow-300 shrink-0"></i>
-                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency By : Dr.pkkp 5:56</span>
+                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency System</span>
             </div>
             <div id="userInfo" class="hidden flex items-center space-x-2 shrink-0">
                 <span id="userDisplayName" class="text-[11px] sm:text-xs bg-indigo-800 px-2.5 py-1 rounded-full border border-indigo-500 max-w-[150px] sm:max-w-none truncate"></span>
@@ -88,7 +88,7 @@
     <!-- Main Content -->
     <main class="flex-grow max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6">
         
-        <!-- View 1: Login Form (ตัด onsubmit ออกทั้งหมด) -->
+        <!-- View 1: Login Form -->
         <section id="loginView" class="max-w-md mx-auto my-6 sm:my-12 bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-100">
             <div class="text-center mb-6">
                 <div class="inline-block p-3.5 bg-indigo-50 text-indigo-600 rounded-full mb-2">
@@ -189,10 +189,7 @@
                     <p class="text-slate-300 text-xs sm:text-sm mt-0.5">จัดการผู้ใช้ คลังข้อสอบ วิเคราะห์ภาพรวม และตรวจสอบการสลับหน้าจอ</p>
                 </div>
                 <div class="flex flex-wrap gap-2 w-full sm:w-auto">
-                    <a href="https://docs.google.com/spreadsheets/d/1j5TcpB2fCmwKWlwJtAgRNr6m51wdbc-RfxeLQ2rcwqA/edit" target="_blank" class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3 py-2 rounded-xl shadow text-xs flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-table"></i> จัดการ Sheet
-                    </a>
-                    <button onclick="window.print()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-2 rounded-xl shadow text-xs flex items-center justify-center gap-1.5">
+                    <button onclick="window.print()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2 rounded-xl shadow text-xs flex items-center justify-center gap-1.5">
                         <i class="fa-solid fa-print"></i> พิมพ์รายงาน
                     </button>
                 </div>
@@ -289,9 +286,10 @@
 
     </main>
 
-    <!-- JS Logic ผูก Event ด้วย EventListener สไตล์โมเดิร์น ป้องกัน ReferenceError สิ้นเชิง -->
+    <!-- JS Logic -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            // URL สำหรับเชี่อมต่อ Google Apps Script
             const API_URL = "https://script.google.com/macros/s/AKfycbzZgxJbRARX8i24E4Im7CDCJqiIaUVXrjtmWecpftWYfGeiN9B6-FWbPZChFX8oO8vzcA/exec";
 
             let currentUser = null;
@@ -305,7 +303,7 @@
             const MAX_VIOLATIONS = 3;
             let isExamActive = false;
 
-            // ผูก Login Event
+            // 1. ระบบ Login Event
             const loginForm = document.getElementById('loginForm');
             if (loginForm) {
                 loginForm.addEventListener('submit', async function(e) {
@@ -345,7 +343,7 @@
                         }
                     } catch (err) {
                         console.error(err);
-                        alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาตรวจสอบ API_URL');
+                        alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการตั้งค่า Apps Script');
                     } finally {
                         btn.disabled = false;
                         btn.innerHTML = 'เข้าสู่ระบบ';
@@ -353,6 +351,7 @@
                 });
             }
 
+            // 2. ปุ่มควบคุม UI ต่างๆ
             document.getElementById('logoutBtn').addEventListener('click', function() {
                 currentUser = null;
                 document.getElementById('userInfo').classList.add('hidden');
@@ -386,7 +385,12 @@
             });
 
             document.getElementById('nextBtn').addEventListener('click', function() {
-                if (currentIndex < currentExam.length - 1) { currentIndex++; renderQuestion(); }
+                if (currentIndex < currentExam.length - 1) { 
+                    currentIndex++; 
+                    renderQuestion(); 
+                } else {
+                    submitExam();
+                }
             });
 
             document.getElementById('submitExamBtn').addEventListener('click', function() {
@@ -402,6 +406,7 @@
                 renderAdminTable(filtered);
             });
 
+            // 3. ฟังก์ชันป้องกันการทุจริต (Lockdown)
             function enterFullscreen() {
                 const elem = document.documentElement;
                 if (elem.requestFullscreen) { elem.requestFullscreen(); }
@@ -484,6 +489,7 @@
                 }
             }
 
+            // 4. การดึงข้อมูล Dashboard ของ Student & Admin
             async function loadStudentDashboardHistory() {
                 try {
                     const res = await fetch(API_URL, {
@@ -622,6 +628,7 @@
                 initRadarChart([cf, ka, lo]);
             }
 
+            // 5. กระบวนการทำข้อสอบ (Exam Process)
             async function startExam() {
                 document.getElementById('studentDashboardView').classList.add('hidden');
                 document.getElementById('examView').classList.remove('hidden');
@@ -692,7 +699,7 @@
                 });
 
                 document.getElementById('prevBtn').disabled = currentIndex === 0;
-                document.getElementById('nextBtn').innerText = currentIndex === (currentExam.length - 1) ? "ตรวจสอบคำตอบ" : "ข้อถัดไป";
+                document.getElementById('nextBtn').innerText = currentIndex === (currentExam.length - 1) ? "ส่งข้อสอบ" : "ข้อถัดไป";
             }
 
             function renderNavigator() {
@@ -722,6 +729,7 @@
                 document.getElementById('answeredCount').innerText = `${count}/${currentExam.length}`;
             }
 
+            // 6. การส่งข้อสอบและการประมวลผลคะแนน
             async function submitExam() {
                 if (!confirm("คุณต้องการส่งข้อสอบใช่หรือไม่?")) return;
 
@@ -810,6 +818,7 @@
                 }
             }
 
+            // 7. วาด Radar Chart
             function initRadarChart(mainScores) {
                 const ctx = document.getElementById('competencyChart').getContext('2d');
                 if (chartInstance) chartInstance.destroy();
