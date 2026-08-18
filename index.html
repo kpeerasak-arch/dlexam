@@ -9,7 +9,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body { -webkit-tap-highlight-color: transparent; }
+        body { -webkit-tap-highlight-color: transparent; user-select: none; }
         @media print {
             nav, .no-print { display: none !important; }
             body { background: white; color: black; }
@@ -24,7 +24,7 @@
         <div class="max-w-7xl mx-auto px-4 py-2.5 flex justify-between items-center gap-2">
             <div class="flex items-center space-x-2 min-w-0">
                 <i class="fa-solid fa-laptop-code text-xl text-yellow-300 shrink-0"></i>
-                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency Test : by Dr.pkkp 18/8/2026 </span>
+                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency</span>
             </div>
             <div id="userInfo" class="hidden flex items-center space-x-2 shrink-0">
                 <span id="userDisplayName" class="text-[11px] sm:text-xs bg-indigo-800 px-2.5 py-1 rounded-full border border-indigo-500 max-w-[150px] sm:max-w-none truncate"></span>
@@ -34,6 +34,56 @@
             </div>
         </div>
     </nav>
+
+    <!-- Modal: คำสั่งและข้อตกลงเบื้องต้นสำหรับการทำข้อสอบ -->
+    <div id="examRulesModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white max-w-2xl w-full rounded-2xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[90vh]">
+            <div class="bg-indigo-700 text-white p-4 sm:p-5 flex items-center gap-3 shrink-0">
+                <i class="fa-solid fa-shield-halved text-2xl text-yellow-300"></i>
+                <div>
+                    <h2 class="font-bold text-base sm:text-lg">คำสั่งและข้อตกลงเบื้องต้นสำหรับการทำข้อสอบ</h2>
+                    <p class="text-indigo-200 text-xs mt-0.5">โปรดอ่านคำชี้แจงและปฏิบัติตามระเบียบการสอบอย่างเคร่งครัด</p>
+                </div>
+            </div>
+
+            <div class="p-4 sm:p-6 space-y-4 text-xs sm:text-sm text-slate-700 overflow-y-auto flex-grow">
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 flex items-start gap-3 text-amber-800">
+                    <i class="fa-solid fa-triangle-exclamation text-xl shrink-0 mt-0.5"></i>
+                    <div>
+                        <b class="font-bold">ระบบควบคุมความปลอดภัยในการสอบ (Lockdown Mode):</b>
+                        <p class="mt-1 text-xs leading-relaxed">เมื่อกด "ยอมรับเงื่อนไขและเริ่มทำข้อสอบ" ระบบจะเปิดโหมดเต็มหน้าจอ (Fullscreen) และเริ่มเปิดใช้งานระบบตรวจจับการสลับหน้าจอทันที</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    <h3 class="font-bold text-slate-800 text-sm border-b pb-1">ข้อปฏิบัติและกฎระเบียบการสอบ:</h3>
+                    <ul class="space-y-2 text-slate-600 list-disc list-inside">
+                        <li><b>จำนวนข้อสอบ:</b> แบบทดสอบสมรรถนะดิจิทัล 100 ข้อ (สุ่มจากคลังข้อสอบ)</li>
+                        <li><b>โหมดเต็มหน้าจอ (Fullscreen):</b> ต้องทำข้อสอบในโหมดเต็มหน้าจอเท่านั้น</li>
+                        <li><b>ห้ามสลับแท็บ/แอปพลิเคชัน:</b> ไม่อนุญาตให้สลับหน้าจอ สลับแท็บเบราว์เซอร์ หรือเปิดแอปสืบค้นอื่นๆ</li>
+                        <li><b>ระบบนับการเตือน (Violations):</b> หากสลับหน้าจอ ระบบจะทำการบันทึกประวัติการเตือน <b class="text-red-600">จำกัดการสลับไม่เกิน 3 ครั้ง</b> หากครบ 3 ครั้ง ระบบจะ <b class="text-red-600">ทำการส่งข้อสอบอัตโนมัติทันที</b></li>
+                        <li><b>การบล็อกคีย์ลัดและฟังก์ชัน:</b> ไม่อนุญาตให้คลิกขวา คัดลอก วาง หรือใช้ปุ่ม F12</li>
+                    </ul>
+                </div>
+
+                <div class="pt-2 border-t">
+                    <label class="flex items-center gap-2.5 cursor-pointer bg-slate-50 p-3 rounded-xl border border-slate-200 hover:bg-slate-100 transition">
+                        <input type="checkbox" id="agreeCheckbox" onchange="toggleStartBtn()" class="w-4 h-4 text-indigo-600 rounded shrink-0">
+                        <span class="text-xs font-semibold text-slate-800">ข้าพเจ้าได้อ่าน เข้าใจ และยอมรับข้อตกลงและระเบียบการสอบข้างต้นทุกประการ</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="p-3.5 sm:p-4 bg-slate-50 border-t flex flex-col sm:flex-row justify-end gap-2 shrink-0">
+                <button onclick="closeRulesModal()" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-xl text-xs transition">
+                    ยกเลิก
+                </button>
+                <button id="confirmStartBtn" disabled onclick="confirmAndStartExam()" class="px-5 py-2 bg-indigo-600 disabled:bg-slate-300 hover:bg-indigo-700 disabled:cursor-not-allowed text-white font-bold rounded-xl text-xs shadow transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-lock"></i> ยอมรับเงื่อนไขและเริ่มทำข้อสอบ
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content -->
     <main class="flex-grow max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6">
@@ -69,7 +119,7 @@
                     <h1 class="text-xl sm:text-2xl font-bold">แผงควบคุมการสอบประเมิน</h1>
                     <p class="text-indigo-100 mt-1 text-xs sm:text-sm">การทดสอบ 100 ข้อ (Computing Fundamentals, Key Applications, Living Online)</p>
                 </div>
-                <button onclick="startExam()" class="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold px-6 py-2.5 sm:py-3 rounded-xl shadow-md transition text-sm flex items-center justify-center gap-2">
+                <button onclick="openRulesModal()" class="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold px-6 py-2.5 sm:py-3 rounded-xl shadow-md transition text-sm flex items-center justify-center gap-2">
                     <i class="fa-solid fa-play"></i> เริ่มทำข้อสอบ (100 ข้อ)
                 </button>
             </div>
@@ -100,7 +150,6 @@
                     <i class="fa-solid fa-list-check text-indigo-600 mr-1.5"></i>การวิเคราะห์คะแนนจำแนกตามโครงสร้างสมรรถนะ
                 </h3>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-                    <!-- Domain 1 -->
                     <div class="bg-slate-50 p-3.5 sm:p-4 rounded-xl border border-slate-200 space-y-3">
                         <div class="flex justify-between items-center"><h4 class="font-bold text-indigo-900 text-xs sm:text-sm">1. Computing Fundamentals</h4><span id="cfScoreBadge" class="text-[11px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">0%</span></div>
                         <div class="space-y-2 text-xs">
@@ -110,7 +159,6 @@
                             <div><div class="flex justify-between mb-1"><span>• Security</span><span id="sub_sec">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_sec" class="bg-indigo-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
                         </div>
                     </div>
-                    <!-- Domain 2 -->
                     <div class="bg-slate-50 p-3.5 sm:p-4 rounded-xl border border-slate-200 space-y-3">
                         <div class="flex justify-between items-center"><h4 class="font-bold text-indigo-900 text-xs sm:text-sm">2. Key Applications</h4><span id="kaScoreBadge" class="text-[11px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">0%</span></div>
                         <div class="space-y-2 text-xs">
@@ -121,7 +169,6 @@
                             <div><div class="flex justify-between mb-1"><span>• Database</span><span id="sub_db">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_db" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
                         </div>
                     </div>
-                    <!-- Domain 3 -->
                     <div class="bg-slate-50 p-3.5 sm:p-4 rounded-xl border border-slate-200 space-y-3">
                         <div class="flex justify-between items-center"><h4 class="font-bold text-indigo-900 text-xs sm:text-sm">3. Living Online</h4><span id="loScoreBadge" class="text-[11px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">0%</span></div>
                         <div class="space-y-2 text-xs">
@@ -140,7 +187,7 @@
                     <h1 class="text-lg sm:text-2xl font-bold flex items-center gap-2">
                         <i class="fa-solid fa-user-gear text-yellow-400"></i> แผงควบคุมผู้ดูแลระบบ
                     </h1>
-                    <p class="text-slate-300 text-xs sm:text-sm mt-0.5">จัดการผู้ใช้ คลังข้อสอบ วิเคราะห์ภาพรวม และพิมพ์รายงาน</p>
+                    <p class="text-slate-300 text-xs sm:text-sm mt-0.5">จัดการผู้ใช้ คลังข้อสอบ วิเคราะห์ภาพรวม และตรวจสอบการสลับหน้าจอ</p>
                 </div>
                 <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                     <a href="https://docs.google.com/spreadsheets/d/1j5TcpB2fCmwKWlwJtAgRNr6m51wdbc-RfxeLQ2rcwqA/edit" target="_blank" class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3 py-2 rounded-xl shadow text-xs flex items-center justify-center gap-1.5">
@@ -152,7 +199,6 @@
                 </div>
             </div>
 
-            <!-- Summary Cards Grid -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 no-print">
                 <div class="bg-white p-3.5 sm:p-4 rounded-xl shadow border border-slate-100 text-center">
                     <div class="text-slate-400 text-[11px] sm:text-xs font-semibold">ผู้เข้าสอบทั้งหมด</div>
@@ -167,12 +213,11 @@
                     <div class="text-lg sm:text-2xl font-bold text-indigo-600 mt-1" id="adminAvgScore">0 / 100</div>
                 </div>
                 <div class="bg-white p-3.5 sm:p-4 rounded-xl shadow border border-slate-100 text-center">
-                    <div class="text-slate-400 text-[11px] sm:text-xs font-semibold">สถานะระบบ</div>
-                    <div class="text-lg sm:text-2xl font-bold text-amber-600 mt-1" id="adminUserCount">พร้อมใช้</div>
+                    <div class="text-slate-400 text-[11px] sm:text-xs font-semibold">พบสลับหน้าจอรวม</div>
+                    <div class="text-lg sm:text-2xl font-bold text-red-600 mt-1" id="adminTotalViolations">0 ครั้ง</div>
                 </div>
             </div>
 
-            <!-- Table / Cards Responsive Report -->
             <div class="bg-white p-4 sm:p-6 rounded-2xl shadow border border-slate-100 space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-3 no-print">
                     <h3 class="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
@@ -193,11 +238,12 @@
                                 <th class="p-2.5">CF</th>
                                 <th class="p-2.5">KA</th>
                                 <th class="p-2.5">LO</th>
+                                <th class="p-2.5 text-center">การเตือน (ครั้ง)</th>
                                 <th class="p-2.5">สถานะ</th>
                             </tr>
                         </thead>
                         <tbody id="adminTableBody">
-                            <tr><td colspan="8" class="text-center p-4 text-slate-400">กำลังโหลดข้อมูล...</td></tr>
+                            <tr><td colspan="9" class="text-center p-4 text-slate-400">กำลังโหลดข้อมูล...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -257,6 +303,11 @@
         let chartInstance = null;
         let allAdminLogs = [];
 
+        // ตัวแปร Anti-Cheating
+        let violationCount = 0;
+        const MAX_VIOLATIONS = 3;
+        let isExamActive = false;
+
         async function handleLogin(e) {
             e.preventDefault();
             const u = document.getElementById('usernameInput').value.trim();
@@ -281,7 +332,6 @@
                     document.getElementById('userInfo').classList.remove('hidden');
                     document.getElementById('loginView').classList.add('hidden');
 
-                    // ตรวจจับ Role แบบยืดหยุ่นด้วย .includes('admin')
                     const roleStr = String(roleText).toLowerCase();
                     if (roleStr.includes('admin')) {
                         document.getElementById('adminDashboardView').classList.remove('hidden');
@@ -309,6 +359,117 @@
             document.getElementById('adminDashboardView').classList.add('hidden');
             document.getElementById('examView').classList.add('hidden');
             document.getElementById('loginView').classList.remove('hidden');
+        }
+
+        function openRulesModal() {
+            document.getElementById('agreeCheckbox').checked = false;
+            document.getElementById('confirmStartBtn').disabled = true;
+            document.getElementById('examRulesModal').classList.remove('hidden');
+        }
+
+        function closeRulesModal() {
+            document.getElementById('examRulesModal').classList.add('hidden');
+        }
+
+        function toggleStartBtn() {
+            const isChecked = document.getElementById('agreeCheckbox').checked;
+            document.getElementById('confirmStartBtn').disabled = !isChecked;
+        }
+
+        function confirmAndStartExam() {
+            closeRulesModal();
+            startExam();
+        }
+
+        function enterFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) { elem.requestFullscreen(); }
+            else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
+            else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
+        }
+
+        function exitFullscreen() {
+            if (document.exitFullscreen) { document.exitFullscreen(); }
+            else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+        }
+
+        function enableAntiCheating() {
+            isExamActive = true;
+            violationCount = 0;
+            enterFullscreen();
+
+            document.addEventListener('contextmenu', preventDefaultAction);
+            document.addEventListener('copy', preventDefaultAction);
+            document.addEventListener('paste', preventDefaultAction);
+            document.addEventListener('cut', preventDefaultAction);
+            window.addEventListener('keydown', handleKeyRestrictions);
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+            window.addEventListener('blur', handleWindowBlur);
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+        }
+
+        function disableAntiCheating() {
+            isExamActive = false;
+            document.removeEventListener('contextmenu', preventDefaultAction);
+            document.removeEventListener('copy', preventDefaultAction);
+            document.removeEventListener('paste', preventDefaultAction);
+            document.removeEventListener('cut', preventDefaultAction);
+            window.removeEventListener('keydown', handleKeyRestrictions);
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            window.removeEventListener('blur', handleWindowBlur);
+            document.removeEventListener('fullscreenchange', handleFullscreenChange);
+            exitFullscreen();
+        }
+
+        function preventDefaultAction(e) {
+            if (isExamActive) e.preventDefault();
+        }
+
+        function handleKeyRestrictions(e) {
+            if (!isExamActive) return;
+
+            if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e.ctrlKey && e.keyCode === 85)) {
+                e.preventDefault();
+                alert("⚠️ ไม่อนุญาตให้เปิด Developer Tools ขณะทำข้อสอบ!");
+                return false;
+            }
+
+            if (e.ctrlKey && [65, 67, 78, 80, 83, 84, 86, 87].includes(e.keyCode)) {
+                e.preventDefault();
+                return false;
+            }
+
+            if (e.altKey) { e.preventDefault(); }
+        }
+
+        function handleVisibilityChange() {
+            if (isExamActive && document.hidden) {
+                recordViolation("สลับแท็บหรือออกจากหน้าต่างข้อสอบ");
+            }
+        }
+
+        function handleWindowBlur() {
+            if (isExamActive) {
+                recordViolation("หลุดโฟกัสจากหน้าต่างทำข้อสอบ");
+            }
+        }
+
+        function handleFullscreenChange() {
+            if (isExamActive && !document.fullscreenElement) {
+                recordViolation("ออกจากโหมดเต็มหน้าจอ (Fullscreen)");
+                setTimeout(enterFullscreen, 1000);
+            }
+        }
+
+        function recordViolation(reason) {
+            if (!isExamActive) return;
+            violationCount++;
+            alert(`⚠️ คำเตือนการทุจริต ครั้งที่ ${violationCount}/${MAX_VIOLATIONS}!\nสาเหตุ: ${reason}\nระบบไม่อนุญาตให้สืบค้นข้อมูลภายนอกขณะทำข้อสอบ`);
+
+            if (violationCount >= MAX_VIOLATIONS) {
+                alert("❌ คุณละเมิดระเบียบการสอบเกินกำหนด (3 ครั้ง) ระบบจะทำการส่งข้อสอบโดยอัตโนมัติทันที!");
+                submitExam();
+            }
         }
 
         async function loadStudentDashboardHistory() {
@@ -354,10 +515,12 @@
                     const passCount = allAdminLogs.filter(h => String(h.passStatus).toUpperCase() === 'PASS').length;
                     const passRate = total > 0 ? Math.round((passCount / total) * 100) : 0;
                     const avgScore = total > 0 ? Math.round(allAdminLogs.reduce((acc, curr) => acc + Number(curr.score), 0) / total) : 0;
+                    const totalViolations = allAdminLogs.reduce((acc, curr) => acc + Number(curr.violations || 0), 0);
 
                     document.getElementById('adminTotalExams').innerText = `${total} ครั้ง`;
                     document.getElementById('adminPassRate').innerText = `${passRate}%`;
                     document.getElementById('adminAvgScore').innerText = `${avgScore} / 100`;
+                    document.getElementById('adminTotalViolations').innerText = `${totalViolations} ครั้ง`;
 
                     renderAdminTable(allAdminLogs);
                 }
@@ -371,7 +534,7 @@
             mobileContainer.innerHTML = '';
 
             if (logs.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="text-center p-4 text-slate-400">ยังไม่มีประวัติการสอบในระบบ</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="text-center p-4 text-slate-400">ยังไม่มีประวัติการสอบในระบบ</td></tr>';
                 mobileContainer.innerHTML = '<div class="text-center p-4 text-xs text-slate-400">ยังไม่มีประวัติการสอบในระบบ</div>';
                 return;
             }
@@ -381,8 +544,11 @@
                 const badgeClass = isPass 
                     ? 'bg-emerald-100 text-emerald-700 border-emerald-300' 
                     : 'bg-red-100 text-red-700 border-red-300';
+                
+                const vBadge = Number(item.violations) > 0 
+                    ? `<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">${item.violations}</span>` 
+                    : `<span class="text-slate-400">0</span>`;
 
-                // Desktop Table View
                 tbody.innerHTML += `
                     <tr class="border-b hover:bg-slate-50">
                         <td class="p-2.5 text-slate-500">${index + 1}</td>
@@ -392,13 +558,13 @@
                         <td class="p-2.5">${item.cfScore}</td>
                         <td class="p-2.5">${item.kaScore}</td>
                         <td class="p-2.5">${item.loScore}</td>
+                        <td class="p-2.5 text-center">${vBadge}</td>
                         <td class="p-2.5">
                             <span class="px-2 py-0.5 rounded-full border text-[10px] font-bold ${badgeClass}">${item.passStatus}</span>
                         </td>
                     </tr>
                 `;
 
-                // Mobile Card View
                 mobileContainer.innerHTML += `
                     <div class="p-3 bg-slate-50 border rounded-xl space-y-1.5 text-xs">
                         <div class="flex justify-between items-center">
@@ -408,7 +574,7 @@
                         <div class="text-slate-400 text-[11px]">${item.timestamp}</div>
                         <div class="flex justify-between pt-1 border-t text-slate-600 font-medium">
                             <span>คะแนนรวม: <b class="text-indigo-600">${item.score}</b></span>
-                            <span>CF: ${item.cfScore} | KA: ${item.kaScore} | LO: ${item.loScore}</span>
+                            <span>เตือนสลับจอ: <b class="text-red-600">${item.violations || 0} ครั้ง</b></span>
                         </div>
                     </div>
                 `;
@@ -424,13 +590,11 @@
             renderAdminTable(filtered);
         }
 
-        // ปรับปรุงสูตรคำนวณคะแนนเปอร์เซ็นต์หมวดหลักและหมวดย่อย
         function updateBreakdownUI(lastResult) {
             let cf = 0, ka = 0, lo = 0;
             let sub = { mob:0, hdw:0, sw:0, sec:0, os:0, doc:0, ss:0, pre:0, db:0, net:0, cit:0 };
 
             if (lastResult) {
-                // คำนวณเปอร์เซ็นต์สัดส่วนข้อสอบจริง (CF 30 ข้อ, KA 40 ข้อ, LO 30 ข้อ) จำกัดไม่เกิน 100%
                 cf = lastResult.cfScore ? Math.min(100, Math.round((Number(lastResult.cfScore) / 30) * 100)) : 0;
                 ka = lastResult.kaScore ? Math.min(100, Math.round((Number(lastResult.kaScore) / 40) * 100)) : 0;
                 lo = lastResult.loScore ? Math.min(100, Math.round((Number(lastResult.loScore) / 30) * 100)) : 0;
@@ -459,6 +623,8 @@
             document.getElementById('studentDashboardView').classList.add('hidden');
             document.getElementById('examView').classList.remove('hidden');
             
+            enableAntiCheating();
+
             try {
                 const res = await fetch(API_URL, {
                     method: 'POST',
@@ -555,9 +721,10 @@
 
         function goToQuestion(idx) { currentIndex = idx; renderQuestion(); }
 
-        // ปรับปรุงระบบบันทึกคะแนนคำนวณ 11 หมวดย่อยอย่างแม่นยำ
         async function submitExam() {
             if (!confirm("คุณต้องการส่งข้อสอบใช่หรือไม่?")) return;
+
+            disableAntiCheating();
 
             let totalScore = 0;
             let cfScore = 0, kaScore = 0, loScore = 0;
@@ -616,7 +783,8 @@
                 kaScore: kaScore,
                 loScore: loScore,
                 subBreakdown: subBreakdown,
-                predictionTrend: predictionTrend
+                predictionTrend: predictionTrend,
+                violations: violationCount // 👈 ส่งจำนวนครั้งเตือนเข้าสู่ Google Sheet
             };
 
             try {
@@ -628,7 +796,7 @@
                 const result = await res.json();
 
                 if (result.status === "success") {
-                    alert(`บันทึกผลการสอบเรียบร้อย!\nคะแนนที่ได้: ${totalScore}/100\nสถานะ: ${passStatus}`);
+                    alert(`บันทึกผลการสอบเรียบร้อย!\nคะแนนที่ได้: ${totalScore}/100\nสถานะ: ${passStatus}\nจำนวนการเตือนสลับจอ: ${violationCount} ครั้ง`);
                     document.getElementById('examView').classList.add('hidden');
                     document.getElementById('studentDashboardView').classList.remove('hidden');
                     loadStudentDashboardHistory();
