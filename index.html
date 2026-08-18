@@ -66,20 +66,75 @@
                 </button>
             </div>
 
-            <!-- Stats & Analytics Grid -->
+            <!-- Main Dashboard Cards -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Status & Pass Prediction Card -->
                 <div class="bg-white p-5 rounded-2xl shadow border border-slate-100 flex flex-col justify-between">
                     <div>
                         <h3 class="font-bold text-slate-700 mb-2"><i class="fa-solid fa-chart-line text-indigo-600 mr-2"></i>แนวโน้มผลการสอบผ่าน</h3>
                         <div class="text-3xl font-extrabold text-indigo-600 mt-2" id="passPrediction">--</div>
                     </div>
-                    <p class="text-xs text-slate-400 mt-4" id="predictionDetails">วิเคราะห์สถิติคะแนนสะสมของผู้เรียน</p>
+                    <div class="mt-4 pt-4 border-t border-slate-100 space-y-2 text-sm text-slate-600">
+                        <div class="flex justify-between"><span>ประวัติการสอบ:</span><span id="examCountDisplay" class="font-bold">0 ครั้ง</span></div>
+                        <div class="flex justify-between"><span>คะแนนการสอบล่าสุด:</span><span id="lastScoreDisplay" class="font-bold">--</span></div>
+                    </div>
                 </div>
 
+                <!-- Radar Chart Card -->
                 <div class="bg-white p-5 rounded-2xl shadow border border-slate-100 md:col-span-2">
-                    <h3 class="font-bold text-slate-700 mb-2"><i class="fa-solid fa-chart-bar text-indigo-600 mr-2"></i>พัฒนาการคะแนนตามกรอบสมรรถนะ</h3>
-                    <div class="h-48 relative">
+                    <h3 class="font-bold text-slate-700 mb-2"><i class="fa-solid fa-spider text-indigo-600 mr-2"></i>กราฟวิเคราะห์สมรรถนะดิจิทัลรายด้าน (%)</h3>
+                    <div class="h-64 relative">
                         <canvas id="competencyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Detailed Breakdowns: 3 Domains & 11 Subdomains -->
+            <div class="bg-white p-6 rounded-2xl shadow border border-slate-100 space-y-6">
+                <h3 class="font-bold text-slate-800 text-lg border-b pb-3">
+                    <i class="fa-solid fa-list-check text-indigo-600 mr-2"></i>การวิเคราะห์คะแนนจำแนกตามโครงสร้างสมรรถนะ
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="domainBreakdownContainer">
+                    <!-- 1. Computing Fundamentals -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-bold text-indigo-900 text-sm">1. Computing Fundamentals</h4>
+                            <span id="cfScoreBadge" class="text-xs bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">0%</span>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <div><div class="flex justify-between mb-1"><span>• Mobile Devices</span><span id="sub_mob">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_mob" class="bg-indigo-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
+                            <div><div class="flex justify-between mb-1"><span>• Hardware</span><span id="sub_hdw">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_hdw" class="bg-indigo-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
+                            <div><div class="flex justify-between mb-1"><span>• Software</span><span id="sub_sw">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_sw" class="bg-indigo-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
+                            <div><div class="flex justify-between mb-1"><span>• Security</span><span id="sub_sec">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_sec" class="bg-indigo-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Key Applications -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-bold text-indigo-900 text-sm">2. Key Applications</h4>
+                            <span id="kaScoreBadge" class="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">0%</span>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <div><div class="flex justify-between mb-1"><span>• Operating Systems</span><span id="sub_os">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_os" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
+                            <div><div class="flex justify-between mb-1"><span>• Word Processing</span><span id="sub_doc">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_doc" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
+                            <div><div class="flex justify-between mb-1"><span>• Spreadsheet</span><span id="sub_ss">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_ss" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
+                            <div><div class="flex justify-between mb-1"><span>• Presentation</span><span id="sub_pre">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_pre" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
+                            <div><div class="flex justify-between mb-1"><span>• Database</span><span id="sub_db">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_db" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
+                        </div>
+                    </div>
+
+                    <!-- 3. Living Online -->
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-bold text-indigo-900 text-sm">3. Living Online</h4>
+                            <span id="loScoreBadge" class="text-xs bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">0%</span>
+                        </div>
+                        <div class="space-y-2 text-xs">
+                            <div><div class="flex justify-between mb-1"><span>• Internet & Network</span><span id="sub_net">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_net" class="bg-emerald-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
+                            <div><div class="flex justify-between mb-1"><span>• Digital Citizenship</span><span id="sub_cit">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_cit" class="bg-emerald-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -126,7 +181,6 @@
     </main>
 
     <script>
-        // *** สำคัญ: นำ URL ที่ Deploy ได้จาก Apps Script มาวางที่นี่ ***
         const API_URL = "https://script.google.com/macros/s/AKfycbzZgxJbRARX8i24E4Im7CDCJqiIaUVXrjtmWecpftWYfGeiN9B6-FWbPZChFX8oO8vzcA/exec"; 
 
         let currentUser = null;
@@ -190,15 +244,46 @@
                 
                 if (data.status === 'success') {
                     const history = data.history || [];
+                    document.getElementById('examCountDisplay').innerText = `${history.length} ครั้ง`;
+                    
                     if (history.length > 0) {
                         const last = history[history.length - 1];
                         document.getElementById('passPrediction').innerText = `${last.percentage} (${last.trend})`;
+                        document.getElementById('lastScoreDisplay').innerText = `${last.score}/100`;
+                        updateBreakdownUI(last);
                     } else {
                         document.getElementById('passPrediction').innerText = "ยังไม่มีประวัติการสอบ";
+                        document.getElementById('lastScoreDisplay').innerText = "--";
+                        updateBreakdownUI(null);
                     }
-                    initChart(history);
                 }
             } catch (err) { console.error(err); }
+        }
+
+        function updateBreakdownUI(lastResult) {
+            let cf = 0, ka = 0, lo = 0;
+            let sub = { mob:0, hdw:0, sw:0, sec:0, os:0, doc:0, ss:0, pre:0, db:0, net:0, cit:0 };
+
+            if (lastResult && lastResult.subBreakdown) {
+                cf = lastResult.cfScore || 0;
+                ka = lastResult.kaScore || 0;
+                lo = lastResult.loScore || 0;
+                sub = lastResult.subBreakdown;
+            }
+
+            document.getElementById('cfScoreBadge').innerText = `${cf}%`;
+            document.getElementById('kaScoreBadge').innerText = `${ka}%`;
+            document.getElementById('loScoreBadge').innerText = `${lo}%`;
+
+            Object.keys(sub).forEach(key => {
+                const val = sub[key] || 0;
+                const txtElem = document.getElementById(`sub_${key}`);
+                const barElem = document.getElementById(`bar_${key}`);
+                if (txtElem) txtElem.innerText = `${val}%`;
+                if (barElem) barElem.style.width = `${val}%`;
+            });
+
+            initRadarChart([cf, ka, lo, (sub.mob+sub.hdw)/2, (sub.doc+sub.ss)/2, (sub.net+sub.cit)/2]);
         }
 
         async function startExam() {
@@ -230,6 +315,7 @@
         function generateFallbackExam() {
             currentExam = Array.from({length: 100}, (_, i) => ({
                 ID: `Q${i+1}`,
+                Category_ID: i < 30 ? "CF_MOB" : (i < 70 ? "KA_SS" : "LO_NET"),
                 Domain_Name: i < 30 ? "Computing Fundamentals" : (i < 70 ? "Key Applications" : "Living Online"),
                 Level: i % 4 === 0 ? "Level 1" : (i % 4 === 1 ? "Level 2" : (i % 4 === 2 ? "Level 3" : "Level 4")),
                 Question: `ข้อที่ ${i+1}: โจทย์ทดสอบสมรรถนะดิจิทัลวิเคราะห์สถานการณ์จำลอง (ข้อสอบสำรอง)?`,
@@ -305,16 +391,43 @@
 
             let totalScore = 0;
             let cfScore = 0, kaScore = 0, loScore = 0;
+            
+            let subCounts = { mob:0, hdw:0, sw:0, sec:0, os:0, doc:0, ss:0, pre:0, db:0, net:0, cit:0 };
+            let subCorrect = { mob:0, hdw:0, sw:0, sec:0, os:0, doc:0, ss:0, pre:0, db:0, net:0, cit:0 };
 
             currentExam.forEach((q, idx) => {
                 const qKey = q.ID || idx;
-                if (userAnswers[qKey] === String(q.Answer).trim()) {
+                const catId = String(q.Category_ID || '').toUpperCase();
+                const domain = String(q.Domain_Name || q.Category_Name || '');
+                const isCorrect = userAnswers[qKey] === String(q.Answer).trim();
+
+                let key = 'mob';
+                if (catId.includes('MOB')) key = 'mob';
+                else if (catId.includes('HDW')) key = 'hdw';
+                else if (catId.includes('SW')) key = 'sw';
+                else if (catId.includes('SEC')) key = 'sec';
+                else if (catId.includes('OS')) key = 'os';
+                else if (catId.includes('DOC')) key = 'doc';
+                else if (catId.includes('SS')) key = 'ss';
+                else if (catId.includes('PRE')) key = 'pre';
+                else if (catId.includes('DB')) key = 'db';
+                else if (catId.includes('NET')) key = 'net';
+                else if (catId.includes('CIT')) key = 'cit';
+
+                subCounts[key]++;
+
+                if (isCorrect) {
                     totalScore++;
-                    const domain = String(q.Domain_Name || q.Category_Name);
-                    if (domain.includes("Computing")) cfScore++;
-                    else if (domain.includes("Key")) kaScore++;
+                    subCorrect[key]++;
+                    if (domain.includes("Computing") || catId.startsWith("CF")) cfScore++;
+                    else if (domain.includes("Key") || catId.startsWith("KA")) kaScore++;
                     else loScore++;
                 }
+            });
+
+            let subBreakdown = {};
+            Object.keys(subCounts).forEach(k => {
+                subBreakdown[k] = subCounts[k] > 0 ? Math.round((subCorrect[k] / subCounts[k]) * 100) : 0;
             });
 
             const percentage = totalScore;
@@ -330,6 +443,7 @@
                 cfScore: cfScore,
                 kaScore: kaScore,
                 loScore: loScore,
+                subBreakdown: subBreakdown,
                 predictionTrend: predictionTrend
             };
 
@@ -355,30 +469,42 @@
             }
         }
 
-        function initChart(history) {
+        function initRadarChart(scoresData) {
             const ctx = document.getElementById('competencyChart').getContext('2d');
             if (chartInstance) chartInstance.destroy();
 
-            const labels = history.length > 0 ? history.map((_, i) => `ครั้งที่ ${i+1}`) : ['ทดสอบ 1'];
-            const scores = history.length > 0 ? history.map(h => parseFloat(h.percentage)) : [0];
-
             chartInstance = new Chart(ctx, {
-                type: 'line',
+                type: 'radar',
                 data: {
-                    labels: labels,
+                    labels: [
+                        'Computing Fundamentals', 
+                        'Key Applications', 
+                        'Living Online', 
+                        'Hardware & Mobile', 
+                        'Documents & Data', 
+                        'Network & Citizenship'
+                    ],
                     datasets: [{
-                        label: 'คะแนนการสอบ (%)',
-                        data: scores,
+                        label: 'ระดับสมรรถนะ (%)',
+                        data: scoresData && scoresData.length > 0 ? scoresData : [0, 0, 0, 0, 0, 0],
                         borderColor: '#4f46e5',
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                        fill: true,
-                        tension: 0.3
+                        backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                        pointBackgroundColor: '#4f46e5',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: '#4f46e5'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: { y: { min: 0, max: 100 } }
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    }
                 }
             });
         }
