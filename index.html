@@ -2,13 +2,15 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Digital Competency Exam System</title>
     <!-- Tailwind CSS & Chart.js & FontAwesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* CSS Custom Scrollbar & Print Setup */
+        body { -webkit-tap-highlight-color: transparent; }
         @media print {
             nav, .no-print { display: none !important; }
             body { background: white; color: black; }
@@ -16,91 +18,92 @@
         }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col">
+<body class="bg-slate-100 text-slate-800 font-sans min-h-screen flex flex-col justify-between">
 
     <!-- Top Navbar -->
     <nav class="bg-indigo-700 text-white shadow-md sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <i class="fa-solid fa-laptop-code text-2xl text-yellow-300"></i>
-                <span class="font-bold text-lg md:text-xl tracking-wide">Digital Competency System</span>
+        <div class="max-w-7xl mx-auto px-4 py-2.5 flex justify-between items-center gap-2">
+            <div class="flex items-center space-x-2 min-w-0">
+                <i class="fa-solid fa-laptop-code text-xl text-yellow-300 shrink-0"></i>
+                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency</span>
             </div>
-            <div id="userInfo" class="hidden flex items-center space-x-4">
-                <span id="userDisplayName" class="text-xs md:text-sm bg-indigo-800 px-3 py-1 rounded-full border border-indigo-500"></span>
-                <button onclick="logout()" class="text-xs bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg transition shadow">
-                    <i class="fa-solid fa-sign-out-alt"></i> ออกจากระบบ
+            <div id="userInfo" class="hidden flex items-center space-x-2 shrink-0">
+                <span id="userDisplayName" class="text-[11px] sm:text-xs bg-indigo-800 px-2.5 py-1 rounded-full border border-indigo-500 max-w-[150px] sm:max-w-none truncate"></span>
+                <button onclick="logout()" class="text-xs bg-red-500 hover:bg-red-600 text-white px-2.5 py-1 rounded-lg transition shadow flex items-center gap-1">
+                    <i class="fa-solid fa-sign-out-alt"></i> <span class="hidden sm:inline">ออกจากระบบ</span>
                 </button>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
-    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6">
+    <main class="flex-grow max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6">
         
         <!-- View 1: Login Form -->
-        <section id="loginView" class="max-w-md mx-auto my-12 bg-white p-8 rounded-2xl shadow-xl border border-slate-100">
+        <section id="loginView" class="max-w-md mx-auto my-6 sm:my-12 bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-100">
             <div class="text-center mb-6">
-                <div class="inline-block p-4 bg-indigo-50 text-indigo-600 rounded-full mb-3">
-                    <i class="fa-solid fa-user-shield text-3xl"></i>
+                <div class="inline-block p-3.5 bg-indigo-50 text-indigo-600 rounded-full mb-2">
+                    <i class="fa-solid fa-user-shield text-2xl sm:text-3xl"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-slate-800">เข้าสู่ระบบทดสอบ</h2>
-                <p class="text-slate-500 text-sm mt-1">กรอบประเมินสมรรถนะดิจิทัล 100 ข้อ</p>
+                <h2 class="text-xl sm:text-2xl font-bold text-slate-800">เข้าสู่ระบบทดสอบ</h2>
+                <p class="text-slate-500 text-xs sm:text-sm mt-1">กรอบประเมินสมรรถนะดิจิทัล 100 ข้อ</p>
             </div>
             <form onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Username / รหัสนักศึกษา</label>
-                    <input type="text" id="usernameInput" required placeholder="เช่น std69001 หรือ admin" class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Username / รหัสนักศึกษา</label>
+                    <input type="text" id="usernameInput" required placeholder="เช่น std69001 หรือ admin" class="w-full px-3.5 py-2 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-sm font-semibold text-slate-700 mb-1">Password</label>
-                    <input type="password" id="passwordInput" required placeholder="รหัสผ่าน" class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                    <label class="block text-xs sm:text-sm font-semibold text-slate-700 mb-1">Password</label>
+                    <input type="password" id="passwordInput" required placeholder="รหัสผ่าน" class="w-full px-3.5 py-2 text-sm border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
                 </div>
-                <button type="submit" id="loginBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl shadow-md transition">
+                <button type="submit" id="loginBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 text-sm rounded-xl shadow-md transition">
                     เข้าสู่ระบบ
                 </button>
             </form>
         </section>
 
         <!-- View 2: Student Dashboard -->
-        <section id="studentDashboardView" class="hidden space-y-6">
-            <div class="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-6 text-white shadow-lg flex flex-col md:flex-row justify-between items-center gap-4">
-                <div>
-                    <h1 class="text-2xl font-bold">แผงควบคุมการสอบประเมิน</h1>
-                    <p class="text-indigo-100 mt-1 text-sm">การทดสอบ 100 ข้อ (Computing Fundamentals, Key Applications, Living Online)</p>
+        <section id="studentDashboardView" class="hidden space-y-4 sm:space-y-6">
+            <div class="bg-gradient-to-r from-indigo-600 to-blue-600 rounded-2xl p-4 sm:p-6 text-white shadow-lg flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="text-center sm:text-left">
+                    <h1 class="text-xl sm:text-2xl font-bold">แผงควบคุมการสอบประเมิน</h1>
+                    <p class="text-indigo-100 mt-1 text-xs sm:text-sm">การทดสอบ 100 ข้อ (Computing Fundamentals, Key Applications, Living Online)</p>
                 </div>
-                <button onclick="startExam()" class="bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold px-6 py-3 rounded-xl shadow-md transition transform hover:scale-105">
-                    <i class="fa-solid fa-play mr-2"></i> เริ่มทำข้อสอบ (100 ข้อ)
+                <button onclick="startExam()" class="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-slate-900 font-bold px-6 py-2.5 sm:py-3 rounded-xl shadow-md transition text-sm flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i> เริ่มทำข้อสอบ (100 ข้อ)
                 </button>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="bg-white p-5 rounded-2xl shadow border border-slate-100 flex flex-col justify-between">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                <div class="bg-white p-4 sm:p-5 rounded-2xl shadow border border-slate-100 flex flex-col justify-between">
                     <div>
-                        <h3 class="font-bold text-slate-700 mb-2"><i class="fa-solid fa-chart-line text-indigo-600 mr-2"></i>แนวโน้มผลการสอบผ่าน</h3>
-                        <div class="text-2xl font-extrabold text-indigo-600 mt-2" id="passPrediction">--</div>
+                        <h3 class="font-bold text-slate-700 text-sm sm:text-base mb-1"><i class="fa-solid fa-chart-line text-indigo-600 mr-1.5"></i>แนวโน้มผลการสอบผ่าน</h3>
+                        <div class="text-xl sm:text-2xl font-extrabold text-indigo-600 mt-2" id="passPrediction">--</div>
                     </div>
-                    <div class="mt-4 pt-4 border-t border-slate-100 space-y-2 text-sm text-slate-600">
+                    <div class="mt-4 pt-3 border-t border-slate-100 space-y-1.5 text-xs sm:text-sm text-slate-600">
                         <div class="flex justify-between"><span>ประวัติการสอบ:</span><span id="examCountDisplay" class="font-bold">0 ครั้ง</span></div>
                         <div class="flex justify-between"><span>คะแนนการสอบล่าสุด:</span><span id="lastScoreDisplay" class="font-bold">--</span></div>
                     </div>
                 </div>
 
-                <div class="bg-white p-5 rounded-2xl shadow border border-slate-100 md:col-span-2">
-                    <h3 class="font-bold text-slate-700 mb-2"><i class="fa-solid fa-spider text-indigo-600 mr-2"></i>กราฟวิเคราะห์สมรรถนะดิจิทัลรายด้าน (%)</h3>
-                    <div class="h-64 relative">
+                <div class="bg-white p-4 sm:p-5 rounded-2xl shadow border border-slate-100 md:col-span-2">
+                    <h3 class="font-bold text-slate-700 text-sm sm:text-base mb-2"><i class="fa-solid fa-spider text-indigo-600 mr-1.5"></i>กราฟวิเคราะห์สมรรถนะดิจิทัลรายด้าน (%)</h3>
+                    <div class="h-56 sm:h-64 relative">
                         <canvas id="competencyChart"></canvas>
                     </div>
                 </div>
             </div>
 
             <!-- Detailed Breakdowns -->
-            <div class="bg-white p-6 rounded-2xl shadow border border-slate-100 space-y-6">
-                <h3 class="font-bold text-slate-800 text-lg border-b pb-3">
-                    <i class="fa-solid fa-list-check text-indigo-600 mr-2"></i>การวิเคราะห์คะแนนจำแนกตามโครงสร้างสมรรถนะ
+            <div class="bg-white p-4 sm:p-6 rounded-2xl shadow border border-slate-100 space-y-4 sm:space-y-6">
+                <h3 class="font-bold text-slate-800 text-sm sm:text-base border-b pb-3">
+                    <i class="fa-solid fa-list-check text-indigo-600 mr-1.5"></i>การวิเคราะห์คะแนนจำแนกตามโครงสร้างสมรรถนะ
                 </h3>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-                        <div class="flex justify-between items-center"><h4 class="font-bold text-indigo-900 text-sm">1. Computing Fundamentals</h4><span id="cfScoreBadge" class="text-xs bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">0%</span></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                    <!-- Domain 1 -->
+                    <div class="bg-slate-50 p-3.5 sm:p-4 rounded-xl border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center"><h4 class="font-bold text-indigo-900 text-xs sm:text-sm">1. Computing Fundamentals</h4><span id="cfScoreBadge" class="text-[11px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">0%</span></div>
                         <div class="space-y-2 text-xs">
                             <div><div class="flex justify-between mb-1"><span>• Mobile Devices</span><span id="sub_mob">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_mob" class="bg-indigo-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
                             <div><div class="flex justify-between mb-1"><span>• Hardware</span><span id="sub_hdw">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_hdw" class="bg-indigo-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
@@ -108,8 +111,9 @@
                             <div><div class="flex justify-between mb-1"><span>• Security</span><span id="sub_sec">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_sec" class="bg-indigo-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
                         </div>
                     </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-                        <div class="flex justify-between items-center"><h4 class="font-bold text-indigo-900 text-sm">2. Key Applications</h4><span id="kaScoreBadge" class="text-xs bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">0%</span></div>
+                    <!-- Domain 2 -->
+                    <div class="bg-slate-50 p-3.5 sm:p-4 rounded-xl border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center"><h4 class="font-bold text-indigo-900 text-xs sm:text-sm">2. Key Applications</h4><span id="kaScoreBadge" class="text-[11px] bg-blue-100 text-blue-700 font-bold px-2 py-0.5 rounded-full">0%</span></div>
                         <div class="space-y-2 text-xs">
                             <div><div class="flex justify-between mb-1"><span>• Operating Systems</span><span id="sub_os">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_os" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
                             <div><div class="flex justify-between mb-1"><span>• Word Processing</span><span id="sub_doc">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_doc" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
@@ -118,8 +122,9 @@
                             <div><div class="flex justify-between mb-1"><span>• Database</span><span id="sub_db">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_db" class="bg-blue-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
                         </div>
                     </div>
-                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-3">
-                        <div class="flex justify-between items-center"><h4 class="font-bold text-indigo-900 text-sm">3. Living Online</h4><span id="loScoreBadge" class="text-xs bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">0%</span></div>
+                    <!-- Domain 3 -->
+                    <div class="bg-slate-50 p-3.5 sm:p-4 rounded-xl border border-slate-200 space-y-3">
+                        <div class="flex justify-between items-center"><h4 class="font-bold text-indigo-900 text-xs sm:text-sm">3. Living Online</h4><span id="loScoreBadge" class="text-[11px] bg-emerald-100 text-emerald-700 font-bold px-2 py-0.5 rounded-full">0%</span></div>
                         <div class="space-y-2 text-xs">
                             <div><div class="flex justify-between mb-1"><span>• Internet & Network</span><span id="sub_net">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_net" class="bg-emerald-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
                             <div><div class="flex justify-between mb-1"><span>• Digital Citizenship</span><span id="sub_cit">0%</span></div><div class="w-full bg-slate-200 h-1.5 rounded-full"><div id="bar_cit" class="bg-emerald-600 h-1.5 rounded-full" style="width: 0%"></div></div></div>
@@ -129,64 +134,67 @@
             </div>
         </section>
 
-        <!-- View 3: Admin Dashboard (แผงควบคุมผู้ดูแลระบบ) -->
-        <section id="adminDashboardView" class="hidden space-y-6 print-area">
-            <div class="bg-slate-800 text-white p-6 rounded-2xl shadow-lg flex flex-col md:flex-row justify-between items-center gap-4 no-print">
+        <!-- View 3: Admin Dashboard -->
+        <section id="adminDashboardView" class="hidden space-y-4 sm:space-y-6 print-area">
+            <div class="bg-slate-800 text-white p-4 sm:p-6 rounded-2xl shadow-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 no-print">
                 <div>
-                    <h1 class="text-2xl font-bold"><i class="fa-solid fa-user-gear text-yellow-400 mr-2"></i>แผงควบคุมผู้ดูแลระบบ (Admin Dashboard)</h1>
-                    <p class="text-slate-300 text-sm mt-1">จัดการข้อมูลผู้ใช้ คลังข้อสอบ วิเคราะห์สถิติภาพรวม และพิมพ์รายงาน</p>
+                    <h1 class="text-lg sm:text-2xl font-bold flex items-center gap-2">
+                        <i class="fa-solid fa-user-gear text-yellow-400"></i> แผงควบคุมผู้ดูแลระบบ
+                    </h1>
+                    <p class="text-slate-300 text-xs sm:text-sm mt-0.5">จัดการผู้ใช้ คลังข้อสอบ วิเคราะห์ภาพรวม และพิมพ์รายงาน</p>
                 </div>
-                <div class="flex gap-2">
-                    <a href="https://docs.google.com/spreadsheets/d/1j5TcpB2fCmwKWlwJtAgRNr6m51wdbc-RfxeLQ2rcwqA/edit" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2.5 rounded-xl shadow text-xs flex items-center">
-                        <i class="fa-solid fa-table mr-1.5"></i> จัดการ Sheet (ผู้ใช้งาน/ข้อสอบ)
+                <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                    <a href="https://docs.google.com/spreadsheets/d/1j5TcpB2fCmwKWlwJtAgRNr6m51wdbc-RfxeLQ2rcwqA/edit" target="_blank" class="flex-1 sm:flex-none bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-3 py-2 rounded-xl shadow text-xs flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-table"></i> จัดการ Sheet
                     </a>
-                    <button onclick="window.print()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-4 py-2.5 rounded-xl shadow text-xs flex items-center">
-                        <i class="fa-solid fa-print mr-1.5"></i> พิมพ์รายงานสรุป
+                    <button onclick="window.print()" class="flex-1 sm:flex-none bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-3 py-2 rounded-xl shadow text-xs flex items-center justify-center gap-1.5">
+                        <i class="fa-solid fa-print"></i> พิมพ์รายงาน
                     </button>
                 </div>
             </div>
 
-            <!-- Summary Cards -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 no-print">
-                <div class="bg-white p-4 rounded-xl shadow border border-slate-100 text-center">
-                    <div class="text-slate-400 text-xs font-semibold">ผู้เข้าสอบทั้งหมด</div>
-                    <div class="text-2xl font-bold text-slate-800 mt-1" id="adminTotalExams">0 ครั้ง</div>
+            <!-- Summary Cards Grid -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 no-print">
+                <div class="bg-white p-3.5 sm:p-4 rounded-xl shadow border border-slate-100 text-center">
+                    <div class="text-slate-400 text-[11px] sm:text-xs font-semibold">ผู้เข้าสอบทั้งหมด</div>
+                    <div class="text-lg sm:text-2xl font-bold text-slate-800 mt-1" id="adminTotalExams">0 ครั้ง</div>
                 </div>
-                <div class="bg-white p-4 rounded-xl shadow border border-slate-100 text-center">
-                    <div class="text-slate-400 text-xs font-semibold">สอบผ่าน (>=60%)</div>
-                    <div class="text-2xl font-bold text-emerald-600 mt-1" id="adminPassRate">0%</div>
+                <div class="bg-white p-3.5 sm:p-4 rounded-xl shadow border border-slate-100 text-center">
+                    <div class="text-slate-400 text-[11px] sm:text-xs font-semibold">สอบผ่าน (>=60%)</div>
+                    <div class="text-lg sm:text-2xl font-bold text-emerald-600 mt-1" id="adminPassRate">0%</div>
                 </div>
-                <div class="bg-white p-4 rounded-xl shadow border border-slate-100 text-center">
-                    <div class="text-slate-400 text-xs font-semibold">คะแนนเฉลี่ยภาพรวม</div>
-                    <div class="text-2xl font-bold text-indigo-600 mt-1" id="adminAvgScore">0 / 100</div>
+                <div class="bg-white p-3.5 sm:p-4 rounded-xl shadow border border-slate-100 text-center">
+                    <div class="text-slate-400 text-[11px] sm:text-xs font-semibold">คะแนนเฉลี่ยภาพรวม</div>
+                    <div class="text-lg sm:text-2xl font-bold text-indigo-600 mt-1" id="adminAvgScore">0 / 100</div>
                 </div>
-                <div class="bg-white p-4 rounded-xl shadow border border-slate-100 text-center">
-                    <div class="text-slate-400 text-xs font-semibold">ผู้ใช้งานในระบบ</div>
-                    <div class="text-2xl font-bold text-amber-600 mt-1" id="adminUserCount">Active</div>
+                <div class="bg-white p-3.5 sm:p-4 rounded-xl shadow border border-slate-100 text-center">
+                    <div class="text-slate-400 text-[11px] sm:text-xs font-semibold">สถานะระบบ</div>
+                    <div class="text-lg sm:text-2xl font-bold text-amber-600 mt-1" id="adminUserCount">พร้อมใช้</div>
                 </div>
             </div>
 
-            <!-- Table Report -->
-            <div class="bg-white p-6 rounded-2xl shadow border border-slate-100 space-y-4">
-                <div class="flex justify-between items-center border-b pb-4 no-print">
-                    <h3 class="font-bold text-slate-800 text-base">
-                        <i class="fa-solid fa-file-invoice text-indigo-600 mr-2"></i>รายงานสรุปผลการสอบรายบุคคลและภาพรวม
+            <!-- Table / Cards Responsive Report -->
+            <div class="bg-white p-4 sm:p-6 rounded-2xl shadow border border-slate-100 space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-3 no-print">
+                    <h3 class="font-bold text-slate-800 text-sm sm:text-base flex items-center gap-2">
+                        <i class="fa-solid fa-file-invoice text-indigo-600"></i> รายงานสรุปผลการสอบ
                     </h3>
-                    <input type="text" id="adminSearchInput" onkeyup="filterAdminTable()" placeholder="ค้นหา Username หรือสถานะ..." class="px-3 py-1.5 text-xs border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 w-64">
+                    <input type="text" id="adminSearchInput" onkeyup="filterAdminTable()" placeholder="ค้นหา Username หรือสถานะ..." class="w-full sm:w-64 px-3 py-1.5 text-xs border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
 
-                <div class="overflow-x-auto">
+                <!-- Desktop Table View -->
+                <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-left border-collapse text-xs" id="adminReportTable">
                         <thead>
                             <tr class="bg-slate-100 border-b text-slate-700">
-                                <th class="p-3">ลำดับ</th>
-                                <th class="p-3">Username</th>
-                                <th class="p-3">เวลาส่งข้อสอบ</th>
-                                <th class="p-3">คะแนนรวม (100)</th>
-                                <th class="p-3">CF (30)</th>
-                                <th class="p-3">KA (40)</th>
-                                <th class="p-3">LO (30)</th>
-                                <th class="p-3">สถานะ</th>
+                                <th class="p-2.5">ลำดับ</th>
+                                <th class="p-2.5">Username</th>
+                                <th class="p-2.5">เวลาส่งข้อสอบ</th>
+                                <th class="p-2.5">คะแนนรวม</th>
+                                <th class="p-2.5">CF</th>
+                                <th class="p-2.5">KA</th>
+                                <th class="p-2.5">LO</th>
+                                <th class="p-2.5">สถานะ</th>
                             </tr>
                         </thead>
                         <tbody id="adminTableBody">
@@ -194,40 +202,46 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Mobile Card List View -->
+                <div class="block md:hidden space-y-2.5" id="adminMobileCardContainer">
+                    <div class="text-center p-4 text-xs text-slate-400">กำลังโหลดข้อมูล...</div>
+                </div>
             </div>
         </section>
 
         <!-- View 4: Exam Workspace -->
-        <section id="examView" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div class="lg:col-span-3 bg-white p-6 rounded-2xl shadow border border-slate-100 space-y-6">
-                <div class="flex flex-wrap justify-between items-center gap-2 border-b pb-4">
-                    <span id="questionCategory" class="bg-indigo-100 text-indigo-800 text-xs font-bold px-3 py-1 rounded-full"></span>
-                    <span id="questionLevel" class="bg-amber-100 text-amber-800 text-xs font-bold px-3 py-1 rounded-full"></span>
+        <section id="examView" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div class="lg:col-span-3 bg-white p-4 sm:p-6 rounded-2xl shadow border border-slate-100 space-y-4 sm:space-y-6">
+                <div class="flex flex-wrap justify-between items-center gap-2 border-b pb-3">
+                    <span id="questionCategory" class="bg-indigo-100 text-indigo-800 text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full"></span>
+                    <span id="questionLevel" class="bg-amber-100 text-amber-800 text-[11px] sm:text-xs font-bold px-2.5 py-0.5 rounded-full"></span>
                 </div>
 
-                <div class="space-y-4">
-                    <h3 id="questionText" class="text-lg font-bold text-slate-800 min-h-[50px]"></h3>
-                    <div id="choicesContainer" class="space-y-3"></div>
+                <div class="space-y-3 sm:space-y-4">
+                    <h3 id="questionText" class="text-sm sm:text-lg font-bold text-slate-800 leading-relaxed min-h-[40px]"></h3>
+                    <div id="choicesContainer" class="space-y-2 sm:space-y-3"></div>
                 </div>
 
-                <div class="flex justify-between items-center pt-4 border-t">
-                    <button onclick="prevQuestion()" id="prevBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold">
-                        <i class="fa-solid fa-arrow-left mr-1"></i> ข้อก่อนหน้า
+                <div class="flex justify-between items-center pt-4 border-t gap-2">
+                    <button onclick="prevQuestion()" id="prevBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold">
+                        <i class="fa-solid fa-arrow-left mr-1"></i> ก่อนหน้า
                     </button>
-                    <button onclick="nextQuestion()" id="nextBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-xl text-sm font-semibold">
-                        ข้อถัดไป <i class="fa-solid fa-arrow-right ml-1"></i>
+                    <button onclick="nextQuestion()" id="nextBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold">
+                        ถัดไป <i class="fa-solid fa-arrow-right ml-1"></i>
                     </button>
                 </div>
             </div>
 
-            <div class="bg-white p-5 rounded-2xl shadow border border-slate-100 space-y-4">
-                <h4 class="font-bold text-slate-700 text-sm flex items-center justify-between">
-                    <span><i class="fa-solid fa-th mr-2 text-indigo-600"></i>สถานะนำทาง</span>
+            <!-- Navigator Grid -->
+            <div class="bg-white p-4 rounded-2xl shadow border border-slate-100 space-y-3">
+                <h4 class="font-bold text-slate-700 text-xs sm:text-sm flex items-center justify-between">
+                    <span><i class="fa-solid fa-th mr-1.5 text-indigo-600"></i>สถานะนำทาง</span>
                     <span id="answeredCount" class="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-bold">0/100</span>
                 </h4>
-                <div id="navigatorGrid" class="grid grid-cols-5 gap-1.5 max-h-96 overflow-y-auto p-1 border rounded-xl"></div>
-                <button onclick="submitExam()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl shadow transition">
-                    <i class="fa-solid fa-paper-plane mr-2"></i> ส่งข้อสอบ
+                <div id="navigatorGrid" class="grid grid-cols-5 sm:grid-cols-10 lg:grid-cols-5 gap-1.5 max-h-48 lg:max-h-96 overflow-y-auto p-1 border rounded-xl"></div>
+                <button onclick="submitExam()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs sm:text-sm shadow transition">
+                    <i class="fa-solid fa-paper-plane mr-1.5"></i> ส่งข้อสอบ
                 </button>
             </div>
         </section>
@@ -264,12 +278,13 @@
                 if (data.status === 'success') {
                     currentUser = data.user;
                     const roleText = currentUser.role ? currentUser.role : 'Student';
-                    document.getElementById('userDisplayName').innerText = `Role: ${roleText} - ${currentUser.fullname}`;
+                    document.getElementById('userDisplayName').innerText = `${currentUser.fullname}`;
                     document.getElementById('userInfo').classList.remove('hidden');
                     document.getElementById('loginView').classList.add('hidden');
 
-                    // ตรวจสอบ Role เพื่อสลับหน้าจอ
-                    if (String(roleText).toLowerCase() === 'admin') {
+                    // ตรวจสอบ Role อย่างยืดหยุ่น รองรับทั้ง "Admin", "(Role: Admin)", "admin"
+                    const roleStr = String(roleText).toLowerCase();
+                    if (roleStr.includes('admin')) {
                         document.getElementById('adminDashboardView').classList.remove('hidden');
                         loadAdminDashboard();
                     } else {
@@ -336,7 +351,6 @@
                 if (data.status === 'success') {
                     allAdminLogs = data.history || [];
                     
-                    // คำนวณสถิติภาพรวม
                     const total = allAdminLogs.length;
                     const passCount = allAdminLogs.filter(h => String(h.passStatus).toUpperCase() === 'PASS').length;
                     const passRate = total > 0 ? Math.round((passCount / total) * 100) : 0;
@@ -353,31 +367,51 @@
 
         function renderAdminTable(logs) {
             const tbody = document.getElementById('adminTableBody');
+            const mobileContainer = document.getElementById('adminMobileCardContainer');
             tbody.innerHTML = '';
+            mobileContainer.innerHTML = '';
 
             if (logs.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="8" class="text-center p-4 text-slate-400">ยังไม่มีประวัติการสอบในระบบ</td></tr>';
+                mobileContainer.innerHTML = '<div class="text-center p-4 text-xs text-slate-400">ยังไม่มีประวัติการสอบในระบบ</div>';
                 return;
             }
 
             logs.forEach((item, index) => {
-                const badgeClass = String(item.passStatus).toUpperCase() === 'PASS' 
+                const isPass = String(item.passStatus).toUpperCase() === 'PASS';
+                const badgeClass = isPass 
                     ? 'bg-emerald-100 text-emerald-700 border-emerald-300' 
                     : 'bg-red-100 text-red-700 border-red-300';
 
+                // Desktop Table Row
                 tbody.innerHTML += `
                     <tr class="border-b hover:bg-slate-50">
-                        <td class="p-3 text-slate-500">${index + 1}</td>
-                        <td class="p-3 font-semibold text-slate-700">${item.username}</td>
-                        <td class="p-3 text-slate-500">${item.timestamp}</td>
-                        <td class="p-3 font-extrabold text-indigo-600">${item.score}</td>
-                        <td class="p-3">${item.cfScore}</td>
-                        <td class="p-3">${item.kaScore}</td>
-                        <td class="p-3">${item.loScore}</td>
-                        <td class="p-3">
-                            <span class="px-2 py-0.5 rounded-full border text-xs font-bold ${badgeClass}">${item.passStatus}</span>
+                        <td class="p-2.5 text-slate-500">${index + 1}</td>
+                        <td class="p-2.5 font-semibold text-slate-700">${item.username}</td>
+                        <td class="p-2.5 text-slate-500">${item.timestamp}</td>
+                        <td class="p-2.5 font-extrabold text-indigo-600">${item.score}</td>
+                        <td class="p-2.5">${item.cfScore}</td>
+                        <td class="p-2.5">${item.kaScore}</td>
+                        <td class="p-2.5">${item.loScore}</td>
+                        <td class="p-2.5">
+                            <span class="px-2 py-0.5 rounded-full border text-[10px] font-bold ${badgeClass}">${item.passStatus}</span>
                         </td>
                     </tr>
+                `;
+
+                // Mobile Card View
+                mobileContainer.innerHTML += `
+                    <div class="p-3 bg-slate-50 border rounded-xl space-y-1.5 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-slate-800">${index + 1}. ${item.username}</span>
+                            <span class="px-2 py-0.5 rounded-full border text-[10px] font-bold ${badgeClass}">${item.passStatus}</span>
+                        </div>
+                        <div class="text-slate-400 text-[11px]">${item.timestamp}</div>
+                        <div class="flex justify-between pt-1 border-t text-slate-600 font-medium">
+                            <span>คะแนนรวม: <b class="text-indigo-600">${item.score}</b></span>
+                            <span>CF: ${item.cfScore} | KA: ${item.kaScore} | LO: ${item.loScore}</span>
+                        </div>
+                    </div>
                 `;
             });
         }
@@ -474,9 +508,9 @@
                 const selectedClass = userAnswers[q.ID || currentIndex] === key ? 'border-indigo-600 bg-indigo-50' : 'border-slate-200';
                 
                 container.innerHTML += `
-                    <label class="flex items-center p-3.5 border-2 rounded-xl cursor-pointer transition hover:bg-slate-50 ${selectedClass}">
-                        <input type="radio" name="choice" value="${key}" ${checked} onchange="selectChoice('${q.ID || currentIndex}', '${key}')" class="w-4 h-4 text-indigo-600">
-                        <span class="ml-3 text-sm font-medium text-slate-700">${key}. ${choices[key]}</span>
+                    <label class="flex items-center p-3 border-2 rounded-xl cursor-pointer transition hover:bg-slate-50 ${selectedClass}">
+                        <input type="radio" name="choice" value="${key}" ${checked} onchange="selectChoice('${q.ID || currentIndex}', '${key}')" class="w-4 h-4 text-indigo-600 shrink-0">
+                        <span class="ml-2.5 text-xs sm:text-sm font-medium text-slate-700">${key}. ${choices[key]}</span>
                     </label>
                 `;
             });
@@ -509,7 +543,7 @@
                 btnStyle += isAnswered ? ' bg-indigo-600 text-white' : ' bg-slate-100 text-slate-600 hover:bg-slate-200';
                 
                 grid.innerHTML += `
-                    <button onclick="goToQuestion(${idx})" class="h-8 text-xs rounded-lg transition ${btnStyle}">
+                    <button onclick="goToQuestion(${idx})" class="h-7 sm:h-8 text-[11px] sm:text-xs rounded-lg transition ${btnStyle}">
                         ${idx + 1}
                     </button>
                 `;
