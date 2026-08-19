@@ -24,7 +24,7 @@
         <div class="max-w-7xl mx-auto px-4 py-2.5 flex justify-between items-center gap-2">
             <div class="flex items-center space-x-2 min-w-0">
                 <i class="fa-solid fa-laptop-code text-xl text-yellow-300 shrink-0"></i>
-                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency System 1.11</span>
+                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency System 1.1</span>
             </div>
             <div id="userInfo" class="hidden flex items-center space-x-2 shrink-0">
                 <span id="userDisplayName" class="text-[11px] sm:text-xs bg-indigo-800 px-2.5 py-1 rounded-full border border-indigo-500 max-w-[150px] sm:max-w-none truncate"></span>
@@ -51,7 +51,7 @@
                     <i class="fa-solid fa-triangle-exclamation text-xl shrink-0 mt-0.5"></i>
                     <div>
                         <b class="font-bold">ระบบควบคุมความปลอดภัยในการสอบ (Lockdown Mode):</b>
-                        <p class="mt-1 text-xs leading-relaxed">เมื่อกด "ยอมรับเงื่อนไขและเริ่มทำข้อสอบ" ระบบจะเปิดโหมดเต็มหน้าจอ (Fullscreen) และเริ่มเปิดใช้งานระบบตรวจจับการสลับหน้าจอทันที</p>
+                        <p class="mt-1 text-xs leading-relaxed">เมื่อกด "ยอมรับเงื่อนไขและเริ่มทำข้อสอบ" ระบบจะเริ่มเปิดใช้งานระบบตรวจจับการสลับหน้าจอทันที <span id="lockdownModeNote"></span></p>
                     </div>
                 </div>
 
@@ -59,8 +59,8 @@
                     <h3 class="font-bold text-slate-800 text-sm border-b pb-1">ข้อปฏิบัติและกฎระเบียบการสอบ:</h3>
                     <ul class="space-y-2 text-slate-600 list-disc list-inside">
                         <li><b>จำนวนข้อสอบ:</b> แบบทดสอบสมรรถนะดิจิทัล 100 ข้อ (สุ่มจากคลังข้อสอบ)</li>
-                        <li><b>โหมดเต็มหน้าจอ (Fullscreen):</b> ต้องทำข้อสอบในโหมดเต็มหน้าจอเท่านั้น</li>
-                        <li><b>ห้ามสลับแท็บ/แอปพลิเคชัน:</b> ไม่อนุญาตให้สลับหน้าจอ สลับแท็บเบราว์เซอร์ หรือเปิดแอปสืบค้นอื่นๆ</li>
+                        <li id="fullscreenRuleItem" class="hidden"><b>โหมดเต็มหน้าจอ (Fullscreen):</b> เมื่อทำผ่านคอมพิวเตอร์ ต้องทำข้อสอบในโหมดเต็มหน้าจอเท่านั้น</li>
+                        <li><b>ห้ามสลับแท็บ/แอปพลิเคชัน:</b> ไม่อนุญาตให้สลับหน้าจอ สลับแท็บเบราว์เซอร์ หรือเปิดแอปสืบค้นอื่นๆ ไม่ว่าจะทำข้อสอบผ่านคอมพิวเตอร์หรือมือถือ</li>
                         <li><b>ระบบนับการเตือน (Violations):</b> หากสลับหน้าจอ ระบบจะทำการบันทึกประวัติการเตือน <b class="text-red-600">จำกัดการสลับไม่เกิน 3 ครั้ง</b> หากครบ 3 ครั้ง ระบบจะ <b class="text-red-600">ทำการส่งข้อสอบอัตโนมัติทันที</b></li>
                         <li><b>การบล็อกคีย์ลัดและฟังก์ชัน:</b> ไม่อนุญาตให้คลิกขวา คัดลอก วาง หรือใช้ปุ่ม F12</li>
                     </ul>
@@ -302,6 +302,7 @@
             let violationCount = 0;
             const MAX_VIOLATIONS = 3;
             let isExamActive = false;
+            let isMobileExam = false;
             let lastViolationTime = 0;
             const VIOLATION_DEBOUNCE_MS = 1200; // ป้องกันการนับซ้ำเมื่อ event หลายตัวยิงพร้อมกันจากการกระทำเดียว
 
@@ -366,6 +367,17 @@
             document.getElementById('openRulesBtn').addEventListener('click', function() {
                 document.getElementById('agreeCheckbox').checked = false;
                 document.getElementById('confirmStartBtn').disabled = true;
+
+                const note = document.getElementById('lockdownModeNote');
+                const fullscreenItem = document.getElementById('fullscreenRuleItem');
+                if (isMobileDevice()) {
+                    note.innerText = "เนื่องจากทำข้อสอบผ่านมือถือ/แท็บเล็ต ระบบจะไม่บังคับโหมดเต็มหน้าจอ แต่จะตรวจจับการสลับแท็บหรือสลับแอปพลิเคชันแทน";
+                    fullscreenItem.classList.add('hidden');
+                } else {
+                    note.innerText = "บนคอมพิวเตอร์ ระบบจะเปิดโหมดเต็มหน้าจอ (Fullscreen) ด้วย";
+                    fullscreenItem.classList.remove('hidden');
+                }
+
                 document.getElementById('examRulesModal').classList.remove('hidden');
             });
 
@@ -409,31 +421,61 @@
             });
 
             // 3. ฟังก์ชันป้องกันการทุจริต (Lockdown)
+
+            // ตรวจสอบว่าเป็นอุปกรณ์มือถือ/แท็บเล็ตหรือไม่ (ใช้ทั้ง User-Agent และความสามารถของหน้าจอสัมผัส
+            // เพื่อไม่ให้พลาดกรณีแท็บเล็ตที่ user agent ไม่เข้าเงื่อนไข regex ปกติ)
+            function isMobileDevice() {
+                const uaCheck = /Android|iPhone|iPad|iPod|IEMobile|Opera Mini|Mobile|webOS/i.test(navigator.userAgent);
+                const touchCheck = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
+                return uaCheck || touchCheck;
+            }
+
+            function isFullscreenSupported() {
+                const elem = document.documentElement;
+                return !!(elem.requestFullscreen || elem.webkitRequestFullscreen || elem.msRequestFullscreen);
+            }
+
             function enterFullscreen() {
                 const elem = document.documentElement;
-                if (elem.requestFullscreen) { elem.requestFullscreen(); }
-                else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
-                else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
+                try {
+                    if (elem.requestFullscreen) { elem.requestFullscreen().catch(() => {}); }
+                    else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
+                    else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
+                } catch (e) { /* บางเบราว์เซอร์/แอปในเครือข่ายสังคม ไม่รองรับ Fullscreen API - ข้ามไปเงียบๆ */ }
             }
 
             function exitFullscreen() {
-                if (document.exitFullscreen) { document.exitFullscreen(); }
-                else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+                if (!document.fullscreenElement && !document.webkitFullscreenElement) return;
+                try {
+                    if (document.exitFullscreen) { document.exitFullscreen().catch(() => {}); }
+                    else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+                } catch (e) { /* ไม่ได้อยู่ในโหมดเต็มจอ ไม่ต้องทำอะไร */ }
             }
 
             function enableAntiCheating() {
                 isExamActive = true;
                 violationCount = 0;
-                enterFullscreen();
+                lastViolationTime = 0;
+                isMobileExam = isMobileDevice();
 
+                // ตรวจจับการสลับแท็บ/แอป (Page Visibility API) - ทำงานได้ทุกแพลตฟอร์ม รวมมือถือ
+                document.addEventListener('visibilitychange', handleVisibilityChange);
+
+                // บล็อกคลิกขวา / คัดลอก / วาง / ตัด - ทำงานได้ทุกแพลตฟอร์ม
                 document.addEventListener('contextmenu', preventDefaultAction);
                 document.addEventListener('copy', preventDefaultAction);
                 document.addEventListener('paste', preventDefaultAction);
                 document.addEventListener('cut', preventDefaultAction);
                 window.addEventListener('keydown', handleKeyRestrictions);
-                document.addEventListener('visibilitychange', handleVisibilityChange);
-                window.addEventListener('blur', handleWindowBlur);
-                document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+                if (!isMobileExam && isFullscreenSupported()) {
+                    // เดสก์ท็อป/โน้ตบุ๊ก: บังคับโหมดเต็มหน้าจอ + ตรวจจับการหลุดโฟกัสหน้าต่าง
+                    enterFullscreen();
+                    window.addEventListener('blur', handleWindowBlur);
+                    document.addEventListener('fullscreenchange', handleFullscreenChange);
+                }
+                // มือถือ/แท็บเล็ต: ไม่บังคับโหมดเต็มหน้าจอ (หลายเบราว์เซอร์/แอปในเครือข่ายสังคมไม่รองรับ
+                // หรือทำให้หน้าจอแสดงผลผิดเพี้ยน) ใช้ visibilitychange อย่างเดียวเพื่อจับการสลับไปหาคำตอบที่อื่น
             }
 
             function disableAntiCheating() {
