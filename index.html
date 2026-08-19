@@ -35,29 +35,31 @@
         </div>
     </nav>
 
-    <!-- Modal: คำสั่งและข้อตกลงเบื้องต้นสำหรับการทำข้อสอบ -->
-    <div id="examRulesModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white max-w-2xl w-full rounded-2xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[90vh]">
-            <div class="bg-indigo-700 text-white p-4 sm:p-5 flex items-center gap-3 shrink-0">
-                <i class="fa-solid fa-shield-halved text-2xl text-yellow-300"></i>
+    <!-- Modal: คำสั่งและข้อตกลงเบื้องต้นสำหรับการทำข้อสอบ (ปรับแก้โครงสร้าง Flex ให้แสดงปุ่มด้านล่างบนมือถือได้สมบูรณ์) -->
+    <div id="examRulesModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+        <div class="bg-white max-w-2xl w-full rounded-2xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col h-auto max-h-[90vh]">
+            <!-- Header (Fixed Top) -->
+            <div class="bg-indigo-700 text-white p-3.5 sm:p-5 flex items-center gap-3 shrink-0">
+                <i class="fa-solid fa-shield-halved text-xl sm:text-2xl text-yellow-300 shrink-0"></i>
                 <div>
-                    <h2 class="font-bold text-base sm:text-lg">คำสั่งและข้อตกลงเบื้องต้นสำหรับการทำข้อสอบ</h2>
-                    <p class="text-indigo-200 text-xs mt-0.5">โปรดอ่านคำชี้แจงและปฏิบัติตามระเบียบการสอบอย่างเคร่งครัด</p>
+                    <h2 class="font-bold text-sm sm:text-lg leading-snug">คำสั่งและข้อตกลงเบื้องต้นสำหรับการทำข้อสอบ</h2>
+                    <p class="text-indigo-200 text-[11px] sm:text-xs mt-0.5">โปรดอ่านคำชี้แจงและปฏิบัติตามระเบียบการสอบอย่างเคร่งครัด</p>
                 </div>
             </div>
 
-            <div class="p-4 sm:p-6 space-y-4 text-xs sm:text-sm text-slate-700 overflow-y-auto flex-grow">
-                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3.5 flex items-start gap-3 text-amber-800">
-                    <i class="fa-solid fa-triangle-exclamation text-xl shrink-0 mt-0.5"></i>
+            <!-- Scrollable Content -->
+            <div class="p-3.5 sm:p-6 space-y-3 sm:space-y-4 text-xs sm:text-sm text-slate-700 overflow-y-auto flex-1">
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2.5 text-amber-800">
+                    <i class="fa-solid fa-triangle-exclamation text-lg shrink-0 mt-0.5"></i>
                     <div>
                         <b class="font-bold">ระบบควบคุมความปลอดภัยในการสอบ (Lockdown Mode):</b>
-                        <p class="mt-1 text-xs leading-relaxed">เมื่อกด "ยอมรับเงื่อนไขและเริ่มทำข้อสอบ" ระบบจะเริ่มเปิดใช้งานระบบตรวจจับการสลับหน้าจอทันที <span id="lockdownModeNote"></span></p>
+                        <p class="mt-1 text-[11px] sm:text-xs leading-relaxed">เมื่อกด "ยอมรับเงื่อนไขและเริ่มทำข้อสอบ" ระบบจะเริ่มเปิดใช้งานระบบตรวจจับการสลับหน้าจอทันที <span id="lockdownModeNote"></span></p>
                     </div>
                 </div>
 
-                <div class="space-y-2.5">
-                    <h3 class="font-bold text-slate-800 text-sm border-b pb-1">ข้อปฏิบัติและกฎระเบียบการสอบ:</h3>
-                    <ul class="space-y-2 text-slate-600 list-disc list-inside">
+                <div class="space-y-2">
+                    <h3 class="font-bold text-slate-800 text-xs sm:text-sm border-b pb-1">ข้อปฏิบัติและกฎระเบียบการสอบ:</h3>
+                    <ul class="space-y-1.5 text-slate-600 list-disc list-inside text-[11px] sm:text-xs">
                         <li><b>จำนวนข้อสอบ:</b> แบบทดสอบสมรรถนะดิจิทัล 100 ข้อ (สุ่มจากคลังข้อสอบ)</li>
                         <li id="fullscreenRuleItem" class="hidden"><b>โหมดเต็มหน้าจอ (Fullscreen):</b> เมื่อทำผ่านคอมพิวเตอร์ ต้องทำข้อสอบในโหมดเต็มหน้าจอเท่านั้น</li>
                         <li><b>ห้ามสลับแท็บ/แอปพลิเคชัน:</b> ไม่อนุญาตให้สลับหน้าจอ สลับแท็บเบราว์เซอร์ หรือเปิดแอปสืบค้นอื่นๆ ไม่ว่าจะทำข้อสอบผ่านคอมพิวเตอร์หรือมือถือ</li>
@@ -67,19 +69,20 @@
                 </div>
 
                 <div class="pt-2 border-t">
-                    <label class="flex items-center gap-2.5 cursor-pointer bg-slate-50 p-3 rounded-xl border border-slate-200 hover:bg-slate-100 transition">
-                        <input type="checkbox" id="agreeCheckbox" class="w-4 h-4 text-indigo-600 rounded shrink-0">
-                        <span class="text-xs font-semibold text-slate-800">ข้าพเจ้าได้อ่าน เข้าใจ และยอมรับข้อตกลงและระเบียบการสอบข้างต้นทุกประการ</span>
+                    <label class="flex items-start sm:items-center gap-2.5 cursor-pointer bg-slate-50 p-2.5 sm:p-3 rounded-xl border border-slate-200 hover:bg-slate-100 transition">
+                        <input type="checkbox" id="agreeCheckbox" class="w-4 h-4 text-indigo-600 rounded shrink-0 mt-0.5 sm:mt-0">
+                        <span class="text-[11px] sm:text-xs font-semibold text-slate-800 leading-tight">ข้าพเจ้าได้อ่าน เข้าใจ และยอมรับข้อตกลงและระเบียบการสอบข้างต้นทุกประการ</span>
                     </label>
                 </div>
             </div>
 
-            <div class="p-3.5 sm:p-4 bg-slate-50 border-t flex flex-col sm:flex-row justify-end gap-2 shrink-0">
-                <button id="closeRulesBtn" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-xl text-xs transition">
+            <!-- Footer Buttons (Fixed Bottom) -->
+            <div class="p-3 sm:p-4 bg-slate-50 border-t flex flex-row justify-end gap-2 shrink-0">
+                <button id="closeRulesBtn" class="flex-1 sm:flex-none px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-xl text-xs transition">
                     ยกเลิก
                 </button>
-                <button id="confirmStartBtn" disabled class="px-5 py-2 bg-indigo-600 disabled:bg-slate-300 hover:bg-indigo-700 disabled:cursor-not-allowed text-white font-bold rounded-xl text-xs shadow transition flex items-center justify-center gap-1.5">
-                    <i class="fa-solid fa-lock"></i> ยอมรับเงื่อนไขและเริ่มทำข้อสอบ
+                <button id="confirmStartBtn" disabled class="flex-1 sm:flex-none px-4 sm:px-5 py-2 bg-indigo-600 disabled:bg-slate-300 hover:bg-indigo-700 disabled:cursor-not-allowed text-white font-bold rounded-xl text-xs shadow transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-lock text-xs"></i> ยอมรับเงื่อนไขและเริ่มทำข้อสอบ
                 </button>
             </div>
         </div>
@@ -304,7 +307,7 @@
             let isExamActive = false;
             let isMobileExam = false;
             let lastViolationTime = 0;
-            const VIOLATION_DEBOUNCE_MS = 1200; // ป้องกันการนับซ้ำเมื่อ event หลายตัวยิงพร้อมกันจากการกระทำเดียว
+            const VIOLATION_DEBOUNCE_MS = 1200;
 
             // 1. ระบบ Login Event
             const loginForm = document.getElementById('loginForm');
@@ -347,21 +350,32 @@
                     } catch (err) {
                         console.error(err);
                         alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการตั้งค่า Apps Script');
-                    } finally {
+                    } fontally {
                         btn.disabled = false;
                         btn.innerHTML = 'เข้าสู่ระบบ';
                     }
                 });
             }
 
-            // 2. ปุ่มควบคุม UI ต่างๆ
+            // 2. ปุ่มควบคุม UI ต่างๆ และปุ่ม Logout
             document.getElementById('logoutBtn').addEventListener('click', function() {
+                if (isExamActive) {
+                    disableAntiCheating();
+                    currentExam = [];
+                    userAnswers = {};
+                    currentIndex = 0;
+                    violationCount = 0;
+                }
+
                 currentUser = null;
                 document.getElementById('userInfo').classList.add('hidden');
                 document.getElementById('studentDashboardView').classList.add('hidden');
                 document.getElementById('adminDashboardView').classList.add('hidden');
                 document.getElementById('examView').classList.add('hidden');
                 document.getElementById('loginView').classList.remove('hidden');
+                
+                document.getElementById('usernameInput').value = '';
+                document.getElementById('passwordInput').value = '';
             });
 
             document.getElementById('openRulesBtn').addEventListener('click', function() {
@@ -421,9 +435,6 @@
             });
 
             // 3. ฟังก์ชันป้องกันการทุจริต (Lockdown)
-
-            // ตรวจสอบว่าเป็นอุปกรณ์มือถือ/แท็บเล็ตหรือไม่ (ใช้ทั้ง User-Agent และความสามารถของหน้าจอสัมผัส
-            // เพื่อไม่ให้พลาดกรณีแท็บเล็ตที่ user agent ไม่เข้าเงื่อนไข regex ปกติ)
             function isMobileDevice() {
                 const uaCheck = /Android|iPhone|iPad|iPod|IEMobile|Opera Mini|Mobile|webOS/i.test(navigator.userAgent);
                 const touchCheck = (window.matchMedia && window.matchMedia('(pointer: coarse)').matches);
@@ -441,7 +452,7 @@
                     if (elem.requestFullscreen) { elem.requestFullscreen().catch(() => {}); }
                     else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
                     else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
-                } catch (e) { /* บางเบราว์เซอร์/แอปในเครือข่ายสังคม ไม่รองรับ Fullscreen API - ข้ามไปเงียบๆ */ }
+                } catch (e) {}
             }
 
             function exitFullscreen() {
@@ -449,7 +460,7 @@
                 try {
                     if (document.exitFullscreen) { document.exitFullscreen().catch(() => {}); }
                     else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
-                } catch (e) { /* ไม่ได้อยู่ในโหมดเต็มจอ ไม่ต้องทำอะไร */ }
+                } catch (e) {}
             }
 
             function enableAntiCheating() {
@@ -458,10 +469,7 @@
                 lastViolationTime = 0;
                 isMobileExam = isMobileDevice();
 
-                // ตรวจจับการสลับแท็บ/แอป (Page Visibility API) - ทำงานได้ทุกแพลตฟอร์ม รวมมือถือ
                 document.addEventListener('visibilitychange', handleVisibilityChange);
-
-                // บล็อกคลิกขวา / คัดลอก / วาง / ตัด - ทำงานได้ทุกแพลตฟอร์ม
                 document.addEventListener('contextmenu', preventDefaultAction);
                 document.addEventListener('copy', preventDefaultAction);
                 document.addEventListener('paste', preventDefaultAction);
@@ -469,13 +477,10 @@
                 window.addEventListener('keydown', handleKeyRestrictions);
 
                 if (!isMobileExam && isFullscreenSupported()) {
-                    // เดสก์ท็อป/โน้ตบุ๊ก: บังคับโหมดเต็มหน้าจอ + ตรวจจับการหลุดโฟกัสหน้าต่าง
                     enterFullscreen();
                     window.addEventListener('blur', handleWindowBlur);
                     document.addEventListener('fullscreenchange', handleFullscreenChange);
                 }
-                // มือถือ/แท็บเล็ต: ไม่บังคับโหมดเต็มหน้าจอ (หลายเบราว์เซอร์/แอปในเครือข่ายสังคมไม่รองรับ
-                // หรือทำให้หน้าจอแสดงผลผิดเพี้ยน) ใช้ visibilitychange อย่างเดียวเพื่อจับการสลับไปหาคำตอบที่อื่น
             }
 
             function disableAntiCheating() {
@@ -525,8 +530,6 @@
             function recordViolation(reason) {
                 if (!isExamActive) return;
 
-                // ป้องกันไม่ให้ event ที่ยิงพร้อมกัน (เช่น visibilitychange + blur + fullscreenchange
-                // จากการสลับแท็บครั้งเดียว) ถูกนับเป็นหลายครั้ง
                 const now = Date.now();
                 if (now - lastViolationTime < VIOLATION_DEBOUNCE_MS) return;
                 lastViolationTime = now;
