@@ -24,7 +24,7 @@
         <div class="max-w-7xl mx-auto px-4 py-2.5 flex justify-between items-center gap-2">
             <div class="flex items-center space-x-2 min-w-0">
                 <i class="fa-solid fa-laptop-code text-xl text-yellow-300 shrink-0"></i>
-                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency System 1.10</span>
+                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency System 1.11</span>
             </div>
             <div id="userInfo" class="hidden flex items-center space-x-2 shrink-0">
                 <span id="userDisplayName" class="text-[11px] sm:text-xs bg-indigo-800 px-2.5 py-1 rounded-full border border-indigo-500 max-w-[150px] sm:max-w-none truncate"></span>
@@ -289,12 +289,12 @@
     <!-- JS Logic -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // URL สำหรับเชื่อมต่อ Google Apps Script
+            // URL สำหรับเชี่อมต่อ Google Apps Script
             const API_URL = "https://script.google.com/macros/s/AKfycbzZgxJbRARX8i24E4Im7CDCJqiIaUVXrjtmWecpftWYfGeiN9B6-FWbPZChFX8oO8vzcA/exec";
 
             let currentUser = null;
             let currentExam = [];
-            let userAnswers = {}; // Key เป็น Index ของข้อสอบ (0..99)
+            let userAnswers = {};
             let currentIndex = 0;
             let chartInstance = null;
             let allAdminLogs = [];
@@ -302,7 +302,8 @@
             let violationCount = 0;
             const MAX_VIOLATIONS = 3;
             let isExamActive = false;
-            let isAlerting = false; // ป้องกัน Alert เกิดขึ้นซ้ำซ้อนในระบบ Lockdown
+            let lastViolationTime = 0;
+            const VIOLATION_DEBOUNCE_MS = 1200; // ป้องกันการนับซ้ำเมื่อ event หลายตัวยิงพร้อมกันจากการกระทำเดียว
 
             // 1. ระบบ Login Event
             const loginForm = document.getElementById('loginForm');
@@ -327,7 +328,7 @@
                         if (data.status === 'success') {
                             currentUser = data.user;
                             const roleText = currentUser.role ? currentUser.role : 'Student';
-                            document.getElementById('userDisplayName').innerText = `${currentUser.fullname || currentUser.username}`;
+                            document.getElementById('userDisplayName').innerText = `${currentUser.fullname}`;
                             document.getElementById('userInfo').classList.remove('hidden');
                             document.getElementById('loginView').classList.add('hidden');
 
@@ -390,12 +391,12 @@
                     currentIndex++; 
                     renderQuestion(); 
                 } else {
-                    submitExam(false);
+                    submitExam();
                 }
             });
 
             document.getElementById('submitExamBtn').addEventListener('click', function() {
-                submitExam(false);
+                submitExam();
             });
 
             document.getElementById('adminSearchInput').addEventListener('keyup', function() {
@@ -410,22 +411,19 @@
             // 3. ฟังก์ชันป้องกันการทุจริต (Lockdown)
             function enterFullscreen() {
                 const elem = document.documentElement;
-                if (elem.requestFullscreen) { elem.requestFullscreen().catch(() => {}); }
+                if (elem.requestFullscreen) { elem.requestFullscreen(); }
                 else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
                 else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
             }
 
             function exitFullscreen() {
-                if (document.fullscreenElement || document.webkitFullscreenElement) {
-                    if (document.exitFullscreen) { document.exitFullscreen().catch(() => {}); }
-                    else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
-                }
+                if (document.exitFullscreen) { document.exitFullscreen(); }
+                else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
             }
 
             function enableAntiCheating() {
                 isExamActive = true;
                 violationCount = 0;
-                isAlerting = false;
                 enterFullscreen();
 
                 document.addEventListener('contextmenu', preventDefaultAction);
@@ -440,7 +438,6 @@
 
             function disableAntiCheating() {
                 isExamActive = false;
-                isAlerting = false;
                 document.removeEventListener('contextmenu', preventDefaultAction);
                 document.removeEventListener('copy', preventDefaultAction);
                 document.removeEventListener('paste', preventDefaultAction);
@@ -458,7 +455,7 @@
                 if (!isExamActive) return;
                 if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e.ctrlKey && e.keyCode === 85)) {
                     e.preventDefault();
-                    recordViolation("พยายามเปิด Developer Tools");
+                    alert("⚠️ ไม่อนุญาตให้เปิด Developer Tools ขณะทำข้อสอบ!");
                     return false;
                 }
                 if (e.ctrlKey && [65, 67, 78, 80, 83, 84, 86, 87].includes(e.keyCode)) {
@@ -479,22 +476,25 @@
             function handleFullscreenChange() {
                 if (isExamActive && !document.fullscreenElement) {
                     recordViolation("ออกจากโหมดเต็มหน้าจอ (Fullscreen)");
-                    setTimeout(enterFullscreen, 1000);
+                    setTimeout(() => { if (isExamActive) enterFullscreen(); }, 1000);
                 }
             }
 
             function recordViolation(reason) {
-                if (!isExamActive || isAlerting) return;
-                isAlerting = true;
+                if (!isExamActive) return;
+
+                // ป้องกันไม่ให้ event ที่ยิงพร้อมกัน (เช่น visibilitychange + blur + fullscreenchange
+                // จากการสลับแท็บครั้งเดียว) ถูกนับเป็นหลายครั้ง
+                const now = Date.now();
+                if (now - lastViolationTime < VIOLATION_DEBOUNCE_MS) return;
+                lastViolationTime = now;
+
                 violationCount++;
+                alert(`⚠️ คำเตือนการทุจริต ครั้งที่ ${violationCount}/${MAX_VIOLATIONS}!\nสาเหตุ: ${reason}\nระบบไม่อนุญาตให้สืบค้นข้อมูลภายนอกขณะทำข้อสอบ`);
 
                 if (violationCount >= MAX_VIOLATIONS) {
-                    alert(`❌ คุณละเมิดระเบียบการสอบเกินกำหนด (${MAX_VIOLATIONS} ครั้ง) ระบบจะทำการส่งข้อสอบโดยอัตโนมัติทันที!\nสาเหตุ: ${reason}`);
-                    isAlerting = false;
-                    submitExam(true); // Bypasses confirm box
-                } else {
-                    alert(`⚠️ คำเตือนการทุจริต ครั้งที่ ${violationCount}/${MAX_VIOLATIONS}!\nสาเหตุ: ${reason}\nระบบไม่อนุญาตให้สืบค้นข้อมูลภายนอกขณะทำข้อสอบ`);
-                    setTimeout(() => { isAlerting = false; }, 500);
+                    alert("❌ คุณละเมิดระเบียบการสอบเกินกำหนด (3 ครั้ง) ระบบจะทำการส่งข้อสอบโดยอัตโนมัติทันที!");
+                    submitExam(true);
                 }
             }
 
@@ -514,7 +514,7 @@
                         
                         if (history.length > 0) {
                             const last = history[history.length - 1];
-                            document.getElementById('passPrediction').innerText = `${last.score}/100 (${last.trend || 'มีประวัติการสอบ'})`;
+                            document.getElementById('passPrediction').innerText = `${last.score}/100 (${last.trend})`;
                             document.getElementById('lastScoreDisplay').innerText = `${last.score}/100`;
                             updateBreakdownUI(last);
                         } else {
@@ -651,7 +651,7 @@
                         body: JSON.stringify({ action: 'get100Questions' })
                     });
                     const data = await res.json();
-                    if (data.status === 'success' && data.questions && data.questions.length > 0) {
+                    if (data.status === 'success' && data.questions.length > 0) {
                         currentExam = data.questions;
                     } else {
                         generateFallbackExam();
@@ -690,8 +690,8 @@
                 const choices = { A: q.Choice_A, B: q.Choice_B, C: q.Choice_C, D: q.Choice_D };
                 
                 Object.keys(choices).forEach(key => {
-                    const checked = userAnswers[currentIndex] === key ? 'checked' : '';
-                    const selectedClass = userAnswers[currentIndex] === key ? 'border-indigo-600 bg-indigo-50' : 'border-slate-200';
+                    const checked = userAnswers[q.ID || currentIndex] === key ? 'checked' : '';
+                    const selectedClass = userAnswers[q.ID || currentIndex] === key ? 'border-indigo-600 bg-indigo-50' : 'border-slate-200';
                     
                     const label = document.createElement('label');
                     label.className = `flex items-center p-3 border-2 rounded-xl cursor-pointer transition hover:bg-slate-50 ${selectedClass}`;
@@ -699,26 +699,16 @@
                         <input type="radio" name="choice" value="${key}" ${checked} class="w-4 h-4 text-indigo-600 shrink-0">
                         <span class="ml-2.5 text-xs sm:text-sm font-medium text-slate-700">${key}. ${choices[key]}</span>
                     `;
-                    
                     label.querySelector('input').addEventListener('change', function() {
-                        userAnswers[currentIndex] = key;
-                        // อัปเดตสไตล์ของปุ่มเลือกในหน้านี้
-                        Array.from(container.children).forEach(child => {
-                            child.classList.remove('border-indigo-600', 'bg-indigo-50');
-                            child.classList.add('border-slate-200');
-                        });
-                        label.classList.remove('border-slate-200');
-                        label.classList.add('border-indigo-600', 'bg-indigo-50');
+                        userAnswers[q.ID || currentIndex] = key;
                         renderNavigator();
+                        renderQuestion();
                     });
-                    
                     container.appendChild(label);
                 });
 
                 document.getElementById('prevBtn').disabled = currentIndex === 0;
-                document.getElementById('nextBtn').innerHTML = currentIndex === (currentExam.length - 1) 
-                    ? 'ส่งข้อสอบ <i class="fa-solid fa-paper-plane ml-1"></i>' 
-                    : 'ถัดไป <i class="fa-solid fa-arrow-right ml-1"></i>';
+                document.getElementById('nextBtn').innerText = currentIndex === (currentExam.length - 1) ? "ส่งข้อสอบ" : "ข้อถัดไป";
             }
 
             function renderNavigator() {
@@ -727,7 +717,8 @@
                 let count = 0;
 
                 currentExam.forEach((q, idx) => {
-                    const isAnswered = userAnswers[idx] !== undefined;
+                    const qKey = q.ID || idx;
+                    const isAnswered = userAnswers[qKey] !== undefined;
                     if (isAnswered) count++;
 
                     const isCurrent = idx === currentIndex;
@@ -748,10 +739,8 @@
             }
 
             // 6. การส่งข้อสอบและการประมวลผลคะแนน
-            async function submitExam(isForce = false) {
-                if (!isForce) {
-                    if (!confirm("คุณต้องการส่งข้อสอบใช่หรือไม่?")) return;
-                }
+            async function submitExam(isAuto = false) {
+                if (!isAuto && !confirm("คุณต้องการส่งข้อสอบใช่หรือไม่?")) return;
 
                 disableAntiCheating();
 
@@ -762,10 +751,10 @@
                 let subCorrect = { mob:0, hdw:0, sw:0, sec:0, os:0, doc:0, ss:0, pre:0, db:0, net:0, cit:0 };
 
                 currentExam.forEach((q, idx) => {
-                    const userAnswer = userAnswers[idx];
+                    const qKey = q.ID || idx;
                     const catId = String(q.Category_ID || q.Category_Name || '').toUpperCase();
                     const domain = String(q.Domain_Name || q.Category_Name || '').toUpperCase();
-                    const isCorrect = userAnswer && userAnswer === String(q.Answer).trim();
+                    const isCorrect = userAnswers[qKey] === String(q.Answer).trim();
 
                     let key = '';
                     if (catId.includes('MOB')) key = 'mob';
@@ -798,7 +787,7 @@
                     subBreakdown[k] = subCounts[k] > 0 ? Math.min(100, Math.round((subCorrect[k] / subCounts[k]) * 100)) : 0;
                 });
 
-                const percentage = Math.round((totalScore / currentExam.length) * 100);
+                const percentage = totalScore;
                 const passStatus = percentage >= 60 ? "PASS" : "FAIL";
                 const predictionTrend = percentage >= 60 ? "มีแนวโน้มสอบผ่านสูง" : "ต้องปรับปรุงเพิ่มเติม";
 
@@ -825,7 +814,7 @@
                     const result = await res.json();
 
                     if (result.status === "success") {
-                        alert(`บันทึกผลการสอบเรียบร้อย!\nคะแนนที่ได้: ${totalScore}/${currentExam.length} (${percentage}%)\nสถานะ: ${passStatus}\nจำนวนการเตือนสลับจอ: ${violationCount} ครั้ง`);
+                        alert(`บันทึกผลการสอบเรียบร้อย!\nคะแนนที่ได้: ${totalScore}/100\nสถานะ: ${passStatus}\nจำนวนการเตือนสลับจอ: ${violationCount} ครั้ง`);
                         document.getElementById('examView').classList.add('hidden');
                         document.getElementById('studentDashboardView').classList.remove('hidden');
                         loadStudentDashboardHistory();
@@ -866,9 +855,7 @@
                         scales: {
                             r: {
                                 suggestedMin: 0,
-                                suggestedMax: 100,
-                                min: 0,
-                                max: 100
+                                suggestedMax: 100
                             }
                         }
                     }
