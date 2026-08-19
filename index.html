@@ -24,7 +24,7 @@
         <div class="max-w-7xl mx-auto px-4 py-2.5 flex justify-between items-center gap-2">
             <div class="flex items-center space-x-2 min-w-0">
                 <i class="fa-solid fa-laptop-code text-xl text-yellow-300 shrink-0"></i>
-                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency System v: 1.1</span>
+                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency System v:1.12</span>
             </div>
             <div id="userInfo" class="hidden flex items-center space-x-2 shrink-0">
                 <span id="userDisplayName" class="text-[11px] sm:text-xs bg-indigo-800 px-2.5 py-1 rounded-full border border-indigo-500 max-w-[150px] sm:max-w-none truncate"></span>
@@ -82,6 +82,24 @@
                     <i class="fa-solid fa-lock text-xs"></i> ยอมรับเงื่อนไขและเริ่มทำข้อสอบ
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal: แจ้งเตือนการสลับหน้าจอ (Violation Modal) -->
+    <div id="violationModal" class="fixed inset-0 bg-red-950/80 backdrop-blur-md z-[60] hidden flex items-center justify-center p-4">
+        <div class="bg-white max-w-md w-full rounded-2xl shadow-2xl border border-red-100 overflow-hidden text-center p-6 space-y-4">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-red-100 text-red-600 rounded-full mb-1">
+                <i class="fa-solid fa-triangle-exclamation text-3xl"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800">คำเตือนการทุจริตในการสอบ</h3>
+            <p id="violationReasonText" class="text-xs sm:text-sm text-slate-600 leading-relaxed bg-red-50 p-3 rounded-xl border border-red-200"></p>
+            <div class="text-xs text-red-600 font-bold bg-amber-50 p-2.5 rounded-lg border border-amber-200">
+                เตือนครั้งที่ <span id="violationCountText" class="text-sm text-red-700">0</span> / 3
+                <p class="font-normal text-[11px] text-slate-500 mt-0.5">หากสลับหน้าจอเกิน 3 ครั้ง ระบบจะส่งข้อสอบอัตโนมัติทันที</p>
+            </div>
+            <button id="ackViolationBtn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-xl text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-rotate-left"></i> รับทราบ และกลับสู่การทำข้อสอบ
+            </button>
         </div>
     </div>
 
@@ -347,7 +365,7 @@
                     } catch (err) {
                         console.error(err);
                         alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการตั้งค่า Apps Script');
-                    } finally { // ✅ แก้ไขสะกดถูกต้องแล้ว
+                    } finally {
                         btn.disabled = false;
                         btn.innerHTML = 'เข้าสู่ระบบ';
                     }
@@ -431,6 +449,16 @@
                 renderAdminTable(filtered);
             });
 
+            // ปุ่มรับทราบการเตือนสลับหน้าจอ -> ซ่อน Popup และกลับสู่การทำข้อสอบเดิม
+            document.getElementById('ackViolationBtn').addEventListener('click', function() {
+                document.getElementById('violationModal').classList.add('hidden');
+                
+                // หากทำผ่าน PC พยายามขอกลับเข้าโหมด Fullscreen อีกครั้ง
+                if (!isMobileDevice() && isFullscreenSupported() && !document.fullscreenElement) {
+                    enterFullscreen();
+                }
+            });
+
             // 3. ฟังก์ชันป้องกันการทุจริต (Lockdown)
             function isMobileDevice() {
                 const uaCheck = /Android|iPhone|iPad|iPod|IEMobile|Opera Mini|Mobile|webOS/i.test(navigator.userAgent);
@@ -499,7 +527,7 @@
                 if (!isExamActive) return;
                 if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) || (e.ctrlKey && e.keyCode === 85)) {
                     e.preventDefault();
-                    alert("⚠️ ไม่อนุญาตให้เปิด Developer Tools ขณะทำข้อสอบ!");
+                    recordViolation("พยายามเปิด Developer Tools");
                     return false;
                 }
                 if (e.ctrlKey && [65, 67, 78, 80, 83, 84, 86, 87].includes(e.keyCode)) {
@@ -510,7 +538,7 @@
             }
 
             function handleVisibilityChange() {
-                if (isExamActive && document.hidden) { recordViolation("สลับแท็บหรือออกจากหน้าต่างข้อสอบ"); }
+                if (isExamActive && document.hidden) { recordViolation("สลับแท็บเบราว์เซอร์หรือสลับไปแอปพลิเคชันอื่น"); }
             }
 
             function handleWindowBlur() {
@@ -520,10 +548,10 @@
             function handleFullscreenChange() {
                 if (isExamActive && !document.fullscreenElement) {
                     recordViolation("ออกจากโหมดเต็มหน้าจอ (Fullscreen)");
-                    setTimeout(() => { if (isExamActive) enterFullscreen(); }, 1000);
                 }
             }
 
+            // บันทึกการละเมิดและแสดง Modal แจ้งเตือน
             function recordViolation(reason) {
                 if (!isExamActive) return;
 
@@ -532,11 +560,17 @@
                 lastViolationTime = now;
 
                 violationCount++;
-                alert(`⚠️ คำเตือนการทุจริต ครั้งที่ ${violationCount}/${MAX_VIOLATIONS}!\nสาเหตุ: ${reason}\nระบบไม่อนุญาตให้สืบค้นข้อมูลภายนอกขณะทำข้อสอบ`);
 
+                // ตรวจสอบสถานะว่าเกินกำหนด 3 ครั้งหรือไม่
                 if (violationCount >= MAX_VIOLATIONS) {
-                    alert("❌ คุณละเมิดระเบียบการสอบเกินกำหนด (3 ครั้ง) ระบบจะทำการส่งข้อสอบโดยอัตโนมัติทันที!");
+                    alert("❌ คุณสลับหน้าจอเกินกำหนด 3 ครั้งแล้ว! ระบบจะทำการส่งข้อสอบอัตโนมัติทันที");
+                    document.getElementById('violationModal').classList.add('hidden');
                     submitExam(true);
+                } else {
+                    // แสดง Modal เตือนสลับหน้าจอ พร้อมบอกเหตุผลและจำนวนครั้ง
+                    document.getElementById('violationReasonText').innerText = `สาเหตุ: ${reason}`;
+                    document.getElementById('violationCountText').innerText = violationCount;
+                    document.getElementById('violationModal').classList.remove('hidden');
                 }
             }
 
