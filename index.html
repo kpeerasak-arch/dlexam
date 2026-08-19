@@ -24,7 +24,7 @@
         <div class="max-w-7xl mx-auto px-4 py-2.5 flex justify-between items-center gap-2">
             <div class="flex items-center space-x-2 min-w-0">
                 <i class="fa-solid fa-laptop-code text-xl text-yellow-300 shrink-0"></i>
-                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency System v 1.1</span>
+                <span class="font-bold text-sm sm:text-base md:text-lg tracking-wide truncate">Digital Competency System 1.1</span>
             </div>
             <div id="userInfo" class="hidden flex items-center space-x-2 shrink-0">
                 <span id="userDisplayName" class="text-[11px] sm:text-xs bg-indigo-800 px-2.5 py-1 rounded-full border border-indigo-500 max-w-[150px] sm:max-w-none truncate"></span>
@@ -35,10 +35,9 @@
         </div>
     </nav>
 
-    <!-- Modal: คำสั่งและข้อตกลงเบื้องต้นสำหรับการทำข้อสอบ (ปรับแก้โครงสร้าง Flex ให้แสดงปุ่มด้านล่างบนมือถือได้สมบูรณ์) -->
+    <!-- Modal: คำสั่งและข้อตกลงเบื้องต้นสำหรับการทำข้อสอบ -->
     <div id="examRulesModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
         <div class="bg-white max-w-2xl w-full rounded-2xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col h-auto max-h-[90vh]">
-            <!-- Header (Fixed Top) -->
             <div class="bg-indigo-700 text-white p-3.5 sm:p-5 flex items-center gap-3 shrink-0">
                 <i class="fa-solid fa-shield-halved text-xl sm:text-2xl text-yellow-300 shrink-0"></i>
                 <div>
@@ -47,7 +46,6 @@
                 </div>
             </div>
 
-            <!-- Scrollable Content -->
             <div class="p-3.5 sm:p-6 space-y-3 sm:space-y-4 text-xs sm:text-sm text-slate-700 overflow-y-auto flex-1">
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2.5 text-amber-800">
                     <i class="fa-solid fa-triangle-exclamation text-lg shrink-0 mt-0.5"></i>
@@ -76,7 +74,6 @@
                 </div>
             </div>
 
-            <!-- Footer Buttons (Fixed Bottom) -->
             <div class="p-3 sm:p-4 bg-slate-50 border-t flex flex-row justify-end gap-2 shrink-0">
                 <button id="closeRulesBtn" class="flex-1 sm:flex-none px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-xl text-xs transition">
                     ยกเลิก
@@ -350,7 +347,7 @@
                     } catch (err) {
                         console.error(err);
                         alert('ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาตรวจสอบการตั้งค่า Apps Script');
-                    } fontally {
+                    } finally { // ✅ แก้ไขสะกดถูกต้องแล้ว
                         btn.disabled = false;
                         btn.innerHTML = 'เข้าสู่ระบบ';
                     }
