@@ -24,7 +24,7 @@
         <div class="max-w-7xl mx-auto px-3 sm:px-4 py-2.5 flex justify-between items-center gap-2">
             <div class="flex items-center space-x-2 min-w-0">
                 <i class="fa-solid fa-laptop-code text-lg sm:text-xl text-yellow-300 shrink-0"></i>
-                <span class="font-bold text-xs sm:text-base md:text-lg tracking-wide truncate">Digital Competency System By Dr.pkkp : TNSUMK</span>
+                <span class="font-bold text-xs sm:text-base md:text-lg tracking-wide truncate">Digital Competency System</span>
             </div>
             <div id="userInfo" class="hidden flex items-center space-x-2 shrink-0">
                 <span id="userDisplayName" class="text-[10px] sm:text-xs bg-indigo-800 px-2.5 py-1 rounded-full border border-indigo-500 max-w-[120px] sm:max-w-none truncate"></span>
@@ -35,7 +35,7 @@
         </div>
     </nav>
 
-    <!-- Modal: คำสั่งและข้อตกลงเบื้องต้นสำหรับการทำข้อสอบ (แก้ไขป้องกันล้นจอมือถือ) -->
+    <!-- Modal: คำสั่งและข้อตกลงเบื้องต้นสำหรับการทำข้อสอบ -->
     <div id="examRulesModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
         <div class="bg-white max-w-2xl w-full rounded-2xl shadow-2xl border border-slate-100 overflow-hidden flex flex-col max-h-[85vh] sm:max-h-[90vh] my-auto">
             
@@ -48,7 +48,7 @@
                 </div>
             </div>
 
-            <!-- Modal Body (เลื่อน Scroll ในนี้ได้) -->
+            <!-- Modal Body -->
             <div class="p-3.5 sm:p-6 space-y-3 sm:space-y-4 text-xs sm:text-sm text-slate-700 overflow-y-auto flex-grow">
                 <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2.5 text-amber-800">
                     <i class="fa-solid fa-triangle-exclamation text-base sm:text-xl shrink-0 mt-0.5"></i>
@@ -77,7 +77,7 @@
                 </div>
             </div>
 
-            <!-- Modal Footer Buttons (ล็อกติดด้านล่าง ปุ่มไม่ล้น) -->
+            <!-- Modal Footer Buttons -->
             <div class="p-3 sm:p-4 bg-slate-50 border-t flex flex-col-reverse sm:flex-row justify-end gap-2 shrink-0">
                 <button id="closeRulesBtn" class="w-full sm:w-auto px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold rounded-xl text-xs transition">
                     ยกเลิก
@@ -183,7 +183,7 @@
             </div>
         </section>
 
-        <!-- View 3: Admin Dashboard (ปรับเพิ่มการแสดงผล Fullname และแก้ UI รองรับมือถือ) -->
+        <!-- View 3: Admin Dashboard -->
         <section id="adminDashboardView" class="hidden space-y-4 sm:space-y-6 print-area">
             <div class="bg-slate-800 text-white p-4 sm:p-6 rounded-2xl shadow-lg flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 no-print">
                 <div>
@@ -199,7 +199,7 @@
                 </div>
             </div>
 
-            <!-- สถิติสรุป 4 กล่อง -->
+            <!-- สถิติสรุป -->
             <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 no-print">
                 <div class="bg-white p-3 sm:p-4 rounded-xl shadow border border-slate-100 text-center">
                     <div class="text-slate-400 text-[10px] sm:text-xs font-semibold">ผู้เข้าสอบทั้งหมด</div>
@@ -228,7 +228,6 @@
                     <input type="text" id="adminSearchInput" placeholder="ค้นหา รหัส, ชื่อ-นามสกุล หรือสถานะ..." class="w-full sm:w-72 px-3 py-1.5 text-xs border rounded-lg outline-none focus:ring-2 focus:ring-indigo-500">
                 </div>
 
-                <!-- ตารางสำหรับ Desktop/Tablet -->
                 <div class="hidden md:block overflow-x-auto">
                     <table class="w-full text-left border-collapse text-xs" id="adminReportTable">
                         <thead>
@@ -251,7 +250,6 @@
                     </table>
                 </div>
 
-                <!-- การ์ดแสดงผลสำหรับ Smart Phone -->
                 <div class="block md:hidden space-y-2.5" id="adminMobileCardContainer">
                     <div class="text-center p-4 text-xs text-slate-400">กำลังโหลดข้อมูล...</div>
                 </div>
@@ -298,7 +296,6 @@
     <!-- JS Logic -->
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // URL สำหรับเชี่อมต่อ Google Apps Script
             const API_URL = "https://script.google.com/macros/s/AKfycbzZgxJbRARX8i24E4Im7CDCJqiIaUVXrjtmWecpftWYfGeiN9B6-FWbPZChFX8oO8vzcA/exec";
 
             let currentUser = null;
@@ -312,7 +309,10 @@
             const MAX_VIOLATIONS = 3;
             let isExamActive = false;
 
-            // 1. ระบบ Login Event
+            // ตรวจสอบว่าเป็นสมาร์ตโฟนหรือไม่
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || window.innerWidth < 768;
+
+            // Login Event
             const loginForm = document.getElementById('loginForm');
             if (loginForm) {
                 loginForm.addEventListener('submit', async function(e) {
@@ -360,7 +360,6 @@
                 });
             }
 
-            // 2. ปุ่มควบคุม UI ต่างๆ
             document.getElementById('logoutBtn').addEventListener('click', function() {
                 currentUser = null;
                 document.getElementById('userInfo').classList.add('hidden');
@@ -406,7 +405,6 @@
                 submitExam();
             });
 
-            // ค้นหาใน Admin Dashboard (รองรับการค้นหาชื่อ-นามสกุล)
             document.getElementById('adminSearchInput').addEventListener('keyup', function() {
                 const term = this.value.toLowerCase();
                 const filtered = allAdminLogs.filter(l => 
@@ -417,17 +415,24 @@
                 renderAdminTable(filtered);
             });
 
-            // 3. ฟังก์ชันป้องกันการทุจริต (Lockdown)
+            // ปรับปรุงฟังก์ชันควบคุม Fullscreen & Anti-Cheating
             function enterFullscreen() {
-                const elem = document.documentElement;
-                if (elem.requestFullscreen) { elem.requestFullscreen(); }
-                else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
-                else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
+                if (isMobile) return; // ข้ามการบังคับ Fullscreen บนโทรศัพท์มือถือ ป้องกัน Error บังคับส่งสอบ
+                try {
+                    const elem = document.documentElement;
+                    if (elem.requestFullscreen) { elem.requestFullscreen().catch(() => {}); }
+                    else if (elem.webkitRequestFullscreen) { elem.webkitRequestFullscreen(); }
+                    else if (elem.msRequestFullscreen) { elem.msRequestFullscreen(); }
+                } catch(e) {}
             }
 
             function exitFullscreen() {
-                if (document.exitFullscreen) { document.exitFullscreen(); }
-                else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+                try {
+                    if (document.fullscreenElement || document.webkitFullscreenElement) {
+                        if (document.exitFullscreen) { document.exitFullscreen().catch(() => {}); }
+                        else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+                    }
+                } catch(e) {}
             }
 
             function enableAntiCheating() {
@@ -442,7 +447,9 @@
                 window.addEventListener('keydown', handleKeyRestrictions);
                 document.addEventListener('visibilitychange', handleVisibilityChange);
                 window.addEventListener('blur', handleWindowBlur);
-                document.addEventListener('fullscreenchange', handleFullscreenChange);
+                if (!isMobile) {
+                    document.addEventListener('fullscreenchange', handleFullscreenChange);
+                }
             }
 
             function disableAntiCheating() {
@@ -454,8 +461,10 @@
                 window.removeEventListener('keydown', handleKeyRestrictions);
                 document.removeEventListener('visibilitychange', handleVisibilityChange);
                 window.removeEventListener('blur', handleWindowBlur);
-                document.removeEventListener('fullscreenchange', handleFullscreenChange);
-                exitFullscreen();
+                if (!isMobile) {
+                    document.removeEventListener('fullscreenchange', handleFullscreenChange);
+                }
+                exitFullscreen(); // คืนค่า Fullscreen อย่างปลอดภัย
             }
 
             function preventDefaultAction(e) { if (isExamActive) e.preventDefault(); }
@@ -479,11 +488,11 @@
             }
 
             function handleWindowBlur() {
-                if (isExamActive) { recordViolation("หลุดโฟกัสจากหน้าต่างทำข้อสอบ"); }
+                if (isExamActive && !isMobile) { recordViolation("หลุดโฟกัสจากหน้าต่างทำข้อสอบ"); }
             }
 
             function handleFullscreenChange() {
-                if (isExamActive && !document.fullscreenElement) {
+                if (isExamActive && !document.fullscreenElement && !isMobile) {
                     recordViolation("ออกจากโหมดเต็มหน้าจอ (Fullscreen)");
                     setTimeout(enterFullscreen, 1000);
                 }
@@ -492,15 +501,15 @@
             function recordViolation(reason) {
                 if (!isExamActive) return;
                 violationCount++;
-                alert(`⚠️ คำเตือนการทุจริต ครั้งที่ ${violationCount}/${MAX_VIOLATIONS}!\nสาเหตุ: ${reason}\nระบบไม่อนุญาตให้สืบค้นข้อมูลภายนอกขณะทำข้อสอบ`);
-
+                
                 if (violationCount >= MAX_VIOLATIONS) {
                     alert("❌ คุณละเมิดระเบียบการสอบเกินกำหนด (3 ครั้ง) ระบบจะทำการส่งข้อสอบโดยอัตโนมัติทันที!");
-                    submitExam();
+                    submitExam(true); // บังคับส่งข้อสอบเนื่องจากละเมิดกฎ
+                } else {
+                    alert(`⚠️ คำเตือนการทุจริต ครั้งที่ ${violationCount}/${MAX_VIOLATIONS}!\nสาเหตุ: ${reason}\nระบบไม่อนุญาตให้สืบค้นข้อมูลภายนอกขณะทำข้อสอบ`);
                 }
             }
 
-            // 4. การดึงข้อมูล Dashboard ของ Student & Admin
             async function loadStudentDashboardHistory() {
                 try {
                     const res = await fetch(API_URL, {
@@ -556,7 +565,6 @@
                 } catch (err) { console.error(err); }
             }
 
-            // แสดงตารางและคาร์ด Admin (เพิ่มการแสดง Fullname)
             function renderAdminTable(logs) {
                 const tbody = document.getElementById('adminTableBody');
                 const mobileContainer = document.getElementById('adminMobileCardContainer');
@@ -579,7 +587,7 @@
                         ? `<span class="bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-bold">${item.violations}</span>` 
                         : `<span class="text-slate-400">0</span>`;
 
-                    const displayFullname = item.fullname || item.username; // แสดงชื่อเต็ม
+                    const displayFullname = item.fullname || item.username;
 
                     tbody.innerHTML += `
                         <tr class="border-b hover:bg-slate-50">
@@ -646,7 +654,6 @@
                 initRadarChart([cf, ka, lo]);
             }
 
-            // 5. กระบวนการทำข้อสอบ (Exam Process)
             async function startExam() {
                 document.getElementById('studentDashboardView').classList.add('hidden');
                 document.getElementById('examView').classList.remove('hidden');
@@ -747,11 +754,18 @@
                 document.getElementById('answeredCount').innerText = `${count}/${currentExam.length}`;
             }
 
-            // 6. การส่งข้อสอบและการประมวลผลคะแนน
-            async function submitExam() {
-                if (!confirm("คุณต้องการส่งข้อสอบใช่หรือไม่?")) return;
-
+            // ปรับปรุงฟังก์ชันส่งข้อสอบ โดยปิดระบบ Anti-Cheating เป็นอันดับแรกสุด
+            async function submitExam(isForced = false) {
+                // 1. ยกเลิกโหมด Anti-Cheating และออกจาก Fullscreen ทันที ป้องกันแจ้งเตือนวนซ้ำ
                 disableAntiCheating();
+
+                if (!isForced) {
+                    if (!confirm("คุณต้องการส่งข้อสอบใช่หรือไม่?")) {
+                        // หากกดยกเลิก คืนค่าโหมด Anti-Cheating ใหม่
+                        enableAntiCheating();
+                        return;
+                    }
+                }
 
                 let totalScore = 0;
                 let cfScore = 0, kaScore = 0, loScore = 0;
@@ -803,7 +817,7 @@
                 const payload = {
                     action: "saveResult",
                     username: currentUser ? currentUser.username : "std69001",
-                    fullname: currentUser ? currentUser.fullname : "", // ส่ง Fullname ไปบันทึกเพิ่ม
+                    fullname: currentUser ? currentUser.fullname : "",
                     totalScore: totalScore,
                     percentage: percentage,
                     passStatus: passStatus,
@@ -837,7 +851,6 @@
                 }
             }
 
-            // 7. วาด Radar Chart
             function initRadarChart(mainScores) {
                 const ctx = document.getElementById('competencyChart').getContext('2d');
                 if (chartInstance) chartInstance.destroy();
